@@ -6,6 +6,7 @@
 package tech.songjian.core.context;
 
 import io.netty.channel.ChannelHandlerContext;
+import tech.songjian.common.rule.Rule;
 import tech.songjian.core.request.GatewayRequest;
 import tech.songjian.core.response.GatewayResponse;
 
