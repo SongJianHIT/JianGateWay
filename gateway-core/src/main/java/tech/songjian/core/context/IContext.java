@@ -151,7 +151,6 @@ public interface IContext {
 
     /**
      * 执行写回接收回调函数
-     * @param consumer
      */
-    void invokeCompletedCallBack(Consumer<IContext> consumer);
+    void invokeCompletedCallBack();
 }

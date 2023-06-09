@@ -54,6 +54,6 @@ public class Config {
     /**
      * 默认单异步模式
      */
-    private boolean wenComplete = true;
+    private boolean whenComplete = true;
 }
 

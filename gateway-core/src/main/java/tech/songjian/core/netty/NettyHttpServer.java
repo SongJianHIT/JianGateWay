@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import tech.songjian.common.utils.RemotingUtil;
 import tech.songjian.core.Config;
 import tech.songjian.core.LifeCycle;
+import tech.songjian.core.netty.processor.NettyProcessor;
 
 import java.net.InetSocketAddress;
 

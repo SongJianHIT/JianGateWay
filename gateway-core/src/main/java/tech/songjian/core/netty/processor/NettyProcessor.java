@@ -1,9 +1,11 @@
 /**
  * @projectName JianGateWay
  * @package tech.songjian.core.netty
- * @className tech.songjian.core.netty.NettyProcessor
+ * @className tech.songjian.core.netty.processor.NettyProcessor
  */
-package tech.songjian.core.netty;
+package tech.songjian.core.netty.processor;
+
+import tech.songjian.core.netty.HttpRequestWrapper;
 
 /**
  * NettyProcessor

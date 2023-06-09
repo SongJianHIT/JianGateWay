@@ -164,7 +164,7 @@ public class BasicContext implements IContext{
     }
 
     @Override
-    public void invokeCompletedCallBack(Consumer<IContext> consumer) {
+    public void invokeCompletedCallBack() {
         // 回调函数不为空，则遍历回调函数集合，并执行
         if (completedCallBacks != null) {
             completedCallBacks.forEach(call->call.accept(this));

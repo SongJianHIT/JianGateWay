@@ -46,8 +46,8 @@ public class GatewayRequest implements IGatewayRequest{
     /**
      * 进入网关的结束时间
      */
-    @Getter
-    private final long endTime;
+    // @Getter
+    // private final long endTime;
 
     /**
      * 字符集
@@ -129,6 +129,8 @@ public class GatewayRequest implements IGatewayRequest{
      */
     private String modifyScheme;
 
+    /************************************** 可修改的请求变量 ***************************************/
+
     /**
      * 可修改的主机名
      */
@@ -144,39 +146,30 @@ public class GatewayRequest implements IGatewayRequest{
      */
     private final RequestBuilder requestBuilder;
 
-    public GatewayRequest(String uniqueId, long beginTime,
-                          long endTime, Charset charSet,
-                          String clientIp, String host,
-                          String path, String uri,
-                          HttpMethod method, String contentType,
-                          HttpHeaders headers, QueryStringDecoder queryStringDecoder,
-                          FullHttpRequest fullHttpRequest, RequestBuilder requestBuilder) {
-        this.uniqueId = uniqueId;
-        // TODO common
+    public GatewayRequest(String uniquedId, Charset charset, String clientIp, String host, String uri, HttpMethod method, String contentType, HttpHeaders headers, FullHttpRequest fullHttpRequest) {
+        this.uniqueId = uniquedId;
         this.beginTime = TimeUtil.currentTimeMillis();
-        this.endTime = endTime;
-        this.charSet = charSet;
+        this.charSet = charset;
         this.clientIp = clientIp;
         this.host = host;
-        this.path = queryStringDecoder.path();
         this.uri = uri;
         this.method = method;
         this.contentType = contentType;
         this.headers = headers;
-        this.queryStringDecoder = new QueryStringDecoder(uri, charSet);
         this.fullHttpRequest = fullHttpRequest;
-        this.requestBuilder = new RequestBuilder();
-
+        this.queryStringDecoder = new QueryStringDecoder(uri,charset);
+        this.path  = queryStringDecoder.path();
         this.modifyHost = host;
         this.modifyPath = path;
-        // TODO common
+
         this.modifyScheme = BasicConst.HTTP_PREFIX_SEPARATOR;
+        this.requestBuilder = new RequestBuilder();
         this.requestBuilder.setMethod(getMethod().name());
         this.requestBuilder.setHeaders(getHeaders());
         this.requestBuilder.setQueryParams(queryStringDecoder.parameters());
-        // TODO common
+
         ByteBuf contentBuffer = fullHttpRequest.content();
-        if (Objects.nonNull(contentBuffer)) {
+        if(Objects.nonNull(contentBuffer)){
             this.requestBuilder.setBody(contentBuffer.nioBuffer());
         }
     }
