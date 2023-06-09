@@ -18,6 +18,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.songjian.common.utils.RemotingUtil;
 import tech.songjian.core.Config;
@@ -46,9 +47,13 @@ public class NettyHttpServer implements LifeCycle {
     private ServerBootstrap serverBootstrap;
 
     /**
-     * boss 和 worker 线程组
+     * boss 和
      */
     private EventLoopGroup bossEventLoopGroup;
+    /**
+     * worker 线程组需要对外暴露，给 client 一起用
+     */
+    @Getter
     private EventLoopGroup workerEventLoopGroup;
 
     /**
@@ -64,8 +69,8 @@ public class NettyHttpServer implements LifeCycle {
 
     @Override
     public void init() {
+        this.serverBootstrap = new ServerBootstrap();
         if (useEpoll()) {
-            this.serverBootstrap = new ServerBootstrap();
             this.bossEventLoopGroup = new EpollEventLoopGroup(
                     config.getEventLoopGroupBossNum(),
                     new DefaultThreadFactory("netty-boss-nio")
@@ -75,7 +80,6 @@ public class NettyHttpServer implements LifeCycle {
                     new DefaultThreadFactory("netty-worker-nio")
             );
         } else {
-            this.serverBootstrap = new ServerBootstrap();
             this.bossEventLoopGroup = new NioEventLoopGroup(
                     config.getEventLoopGroupBossNum(),
                     new DefaultThreadFactory("netty-boss-nio")

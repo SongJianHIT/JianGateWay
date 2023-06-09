@@ -1,9 +1,9 @@
 /**
  * @projectName JianGateWay
  * @package tech.songjian.core.netty
- * @className tech.songjian.core.netty.HttpRequestWrapper
+ * @className tech.songjian.core.request.HttpRequestWrapper
  */
-package tech.songjian.core.netty;
+package tech.songjian.core.request;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;

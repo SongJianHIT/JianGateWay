@@ -29,35 +29,36 @@ public class GatewayResponse {
     private HttpHeaders responseHeaders = new DefaultHttpHeaders();
 
     /**
-     * 额外的响应头，可自定义
+     * 额外的响应结果
      */
-    private HttpHeaders extraResponseHeaders = new DefaultHttpHeaders();
-
+    private final HttpHeaders extraResponseHeaders = new DefaultHttpHeaders();
     /**
      * 响应内容
      */
     private String content;
 
     /**
-     * 返回响应状态码
-     */
-    private HttpResponseStatus httpResponseStatus;
-
-    /**
      * 异步返回对象
      */
     private Response futureResponse;
 
-    public GatewayResponse() {
+    /**
+     * 响应返回码
+     */
+    private HttpResponseStatus httpResponseStatus;
+
+
+    public GatewayResponse(){
+
     }
 
     /**
      * 设置响应头信息
      * @param key
-     * @param value
+     * @param val
      */
-    public void putHeader(CharSequence key, CharSequence value) {
-        responseHeaders.add(key, value);
+    public  void  putHeader(CharSequence key, CharSequence val){
+        responseHeaders.add(key,val);
     }
 
     /**
@@ -65,7 +66,7 @@ public class GatewayResponse {
      * @param futureResponse
      * @return
      */
-    public static GatewayResponse buildGatewayResponse (Response futureResponse) {
+    public  static  GatewayResponse buildGatewayResponse(Response futureResponse){
         GatewayResponse response = new GatewayResponse();
         response.setFutureResponse(futureResponse);
         response.setHttpResponseStatus(HttpResponseStatus.valueOf(futureResponse.getStatusCode()));
@@ -73,41 +74,41 @@ public class GatewayResponse {
     }
 
     /**
-     * 返回一个 JSON 类型的响应信息，失败时使用
+     * 处理返回json对象，失败时调用
+     * @param code
+     * @param args
      * @return
      */
-    public static GatewayResponse buildGatewayResponse (ResponseCode code, Object...args) {
-        // TODO common
+    public  static GatewayResponse buildGatewayResponse(ResponseCode code,Object...args){
         ObjectNode objectNode = JSONUtil.createObjectNode();
-        // 状态码
-        objectNode.put(JSONUtil.STATUS, code.getStatus().code());
-        objectNode.put(JSONUtil.CODE, code.getCode());
-        objectNode.put(JSONUtil.MESSAGE, code.getMessage());
+        objectNode.put(JSONUtil.STATUS,code.getStatus().code());
+        objectNode.put(JSONUtil.CODE,code.getCode());
+        objectNode.put(JSONUtil.MESSAGE,code.getMessage());
 
         GatewayResponse response = new GatewayResponse();
         response.setHttpResponseStatus(code.getStatus());
-        response.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON + ";charset=utf-8");
+        response.putHeader(HttpHeaderNames.CONTENT_TYPE,HttpHeaderValues.APPLICATION_JSON+";charset=utf-8");
         response.setContent(JSONUtil.toJSONString(objectNode));
-        return response;
+
+        return  response;
     }
 
     /**
-     * 返回一个 JSON 类型的响应信息，成功时使用
+     * 处理返回json对象，成功时调用
+     * @param data
      * @return
      */
-    public static GatewayResponse buildGatewayResponse (Object data) {
-        // TODO common
+    public  static GatewayResponse buildGatewayResponse(Object data){
         ObjectNode objectNode = JSONUtil.createObjectNode();
-        // 状态码
-        objectNode.put(JSONUtil.STATUS, ResponseCode.SUCCESS.getStatus().code());
-        objectNode.put(JSONUtil.CODE, ResponseCode.SUCCESS.getStatus().code());
-        objectNode.putPOJO(JSONUtil.DATA, data);
+        objectNode.put(JSONUtil.STATUS,ResponseCode.SUCCESS.getStatus().code());
+        objectNode.put(JSONUtil.CODE,ResponseCode.SUCCESS.getCode());
+        objectNode.putPOJO(JSONUtil.DATA,data);
 
         GatewayResponse response = new GatewayResponse();
         response.setHttpResponseStatus(ResponseCode.SUCCESS.getStatus());
-        response.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON + ";charset=utf-8");
+        response.putHeader(HttpHeaderNames.CONTENT_TYPE,HttpHeaderValues.APPLICATION_JSON+";charset=utf-8");
         response.setContent(JSONUtil.toJSONString(objectNode));
-        return response;
+        return  response;
     }
 }
 

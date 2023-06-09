@@ -22,7 +22,7 @@ import tech.songjian.core.context.GatewayContext;
 import tech.songjian.core.helper.AsyncHttpHelper;
 import tech.songjian.core.helper.RequestHelper;
 import tech.songjian.core.helper.ResponseHelper;
-import tech.songjian.core.netty.HttpRequestWrapper;
+import tech.songjian.core.request.HttpRequestWrapper;
 import tech.songjian.core.response.GatewayResponse;
 
 import java.util.Objects;
@@ -75,11 +75,12 @@ public class NettyCoreProcessor implements NettyProcessor{
     }
 
     /**
-     * 路由函数
+     * 路由函数，请求转发
      * @param gatewayContext
      */
     private void route(GatewayContext gatewayContext) {
         Request request = gatewayContext.getRequest().build();
+        // 发起请求
         CompletableFuture<Response> future = AsyncHttpHelper.getInstance().executeRequest(request);
 
         boolean whenComplete = ConfigLoader.getConfig().isWhenComplete();
@@ -121,12 +122,10 @@ public class NettyCoreProcessor implements NettyProcessor{
             log.error("complete error", t);
         } finally {
             // 改变 context 状态
-            gatewayContext.isWritten();
+            gatewayContext.setWritten();
             // 写回数据
             ResponseHelper.writeResponse(gatewayContext);
         }
-
-
     }
 }
 

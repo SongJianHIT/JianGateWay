@@ -5,7 +5,7 @@
  */
 package tech.songjian.core.netty.processor;
 
-import tech.songjian.core.netty.HttpRequestWrapper;
+import tech.songjian.core.request.HttpRequestWrapper;
 
 /**
  * NettyProcessor
