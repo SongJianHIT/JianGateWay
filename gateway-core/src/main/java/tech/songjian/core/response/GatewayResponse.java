@@ -8,8 +8,10 @@ package tech.songjian.core.response;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.netty.handler.codec.http.*;
 import lombok.Data;
-import net.minidev.json.JSONUtil;
+
 import org.asynchttpclient.Response;
+import tech.songjian.common.enums.ResponseCode;
+import tech.songjian.common.utils.JSONUtil;
 
 /**
  * GatewayResponse
@@ -98,7 +100,7 @@ public class GatewayResponse {
         ObjectNode objectNode = JSONUtil.createObjectNode();
         // 状态码
         objectNode.put(JSONUtil.STATUS, ResponseCode.SUCCESS.getStatus().code());
-        objectNode.put(JSONUtil.CODE, ResponseCode.SUCCESS.getStatus().getCode());
+        objectNode.put(JSONUtil.CODE, ResponseCode.SUCCESS.getStatus().code());
         objectNode.putPOJO(JSONUtil.DATA, data);
 
         GatewayResponse response = new GatewayResponse();

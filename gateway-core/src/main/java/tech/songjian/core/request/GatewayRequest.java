@@ -15,13 +15,12 @@ import lombok.Getter;
 import org.apache.commons.lang.StringUtils;
 import org.asynchttpclient.Request;
 import org.asynchttpclient.RequestBuilder;
+import tech.songjian.common.constants.BasicConst;
+import tech.songjian.common.utils.TimeUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * GatewayRequest
@@ -177,7 +176,7 @@ public class GatewayRequest implements IGatewayRequest{
         this.requestBuilder.setQueryParams(queryStringDecoder.parameters());
         // TODO common
         ByteBuf contentBuffer = fullHttpRequest.content();
-        if (contentBuffer.nonNull(contentBuffer)) {
+        if (Objects.nonNull(contentBuffer)) {
             this.requestBuilder.setBody(contentBuffer.nioBuffer());
         }
     }

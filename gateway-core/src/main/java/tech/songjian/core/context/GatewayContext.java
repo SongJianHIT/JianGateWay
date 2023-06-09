@@ -9,9 +9,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.ReferenceCountUtil;
 import lombok.Setter;
-import tech.songjian.common.rule.Rule;
+import tech.songjian.common.config.Rule;
+import tech.songjian.common.utils.AssertUtil;
 import tech.songjian.core.request.GatewayRequest;
 import tech.songjian.core.response.GatewayResponse;
+
 
 /**
  * GatewayContext
@@ -98,11 +100,11 @@ public class GatewayContext extends BasicContext{
      * @return
      * @param <T>
      */
-    public <T> T getRequireAttribute (String key) {
-        T value = getAttribute(key);
-        AssertUtil.notNull (value, "缺乏必要参数！");
-        return value;
-    }
+//    public <T> T getRequireAttribute (String key) {
+//        T value = getAttribute(key);
+//        AssertUtil.notNull (value, "缺乏必要参数！");
+//        return value;
+//    }
 
     /**
      * 获取指定 key 的上下文参数，如果没有，则返回默认值
