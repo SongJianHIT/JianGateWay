@@ -13,6 +13,8 @@
     <module>gateway-client</module>
     <module>backend-http-server</module>
     <module>backend-dubbo-server</module>
+      <module>gateway-register-center/gateway-register-center-api</module>
+      <module>gateway-register-center/gateway-register-center-nacos-impl</module>
   </modules>
   <packaging>pom</packaging>
 

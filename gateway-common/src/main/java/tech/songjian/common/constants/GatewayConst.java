@@ -8,4 +8,5 @@ public interface GatewayConst {
 
 	String PROTOCOL_KEY = "protocol";
 
+	String META_DATA_KEY = "meta";
 }
