@@ -5,6 +5,7 @@
  */
 package tech.songjian.gateway.client.support;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.songjian.common.config.ServiceDefinition;
 import tech.songjian.common.config.ServiceInstance;
@@ -26,6 +27,7 @@ public abstract class AbstractClientRegisterManager {
     /**
      * 配置
      */
+    @Getter
     private ApiProperties apiProperties;
 
     /**

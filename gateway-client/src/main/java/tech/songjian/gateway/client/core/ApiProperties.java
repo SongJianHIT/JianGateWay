@@ -5,6 +5,8 @@
  */
 package tech.songjian.gateway.client.core;
 
+import lombok.Data;
+
 /**
  * ApiProperties
  * @description 配置，用于存放注册中心地址与环境
@@ -12,6 +14,7 @@ package tech.songjian.gateway.client.core;
  * @date 2023/6/10 12:00
  * @version
  */
+@Data
 public class ApiProperties {
 
     /**
