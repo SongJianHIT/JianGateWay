@@ -11,6 +11,8 @@
     <file url="file://$PROJECT_DIR$/gateway-common/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gateway-config-center/gateway-config-center-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gateway-config-center/gateway-config-center-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gateway-config-center/gateway-config-center-nacos-impl/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gateway-config-center/gateway-config-center-nacos-impl/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gateway-config-center/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gateway-config-center/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gateway-core/src/main/java" charset="UTF-8" />
