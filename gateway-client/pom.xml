@@ -12,6 +12,18 @@
 
     <name>gateway-client</name>
     <url>http://maven.apache.org</url>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>10</source>
+                    <target>10</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <description>提供给下游服务使用，把下游服务也注册到注册中心，让网关也能感知到，从而才可以转发请求</description>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
