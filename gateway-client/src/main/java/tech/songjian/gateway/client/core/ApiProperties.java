@@ -6,6 +6,8 @@
 package tech.songjian.gateway.client.core;
 
 import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * ApiProperties
@@ -15,6 +17,7 @@ import lombok.Data;
  * @version
  */
 @Data
+@ConfigurationProperties(prefix = "api")
 public class ApiProperties {
 
     /**

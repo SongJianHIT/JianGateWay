@@ -46,7 +46,7 @@ public class Dubbo27ClientRegisterManager
 
 
 
-    protected Dubbo27ClientRegisterManager(ApiProperties apiProperties) {
+    public Dubbo27ClientRegisterManager(ApiProperties apiProperties) {
         super(apiProperties);
     }
 

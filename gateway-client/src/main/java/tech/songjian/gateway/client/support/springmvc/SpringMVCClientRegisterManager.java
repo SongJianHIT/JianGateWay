@@ -52,7 +52,7 @@ public class SpringMVCClientRegisterManager
 
     private Set<Object> set = new HashSet<>();
 
-    protected SpringMVCClientRegisterManager(ApiProperties apiProperties) {
+    public SpringMVCClientRegisterManager(ApiProperties apiProperties) {
         super(apiProperties);
     }
 
