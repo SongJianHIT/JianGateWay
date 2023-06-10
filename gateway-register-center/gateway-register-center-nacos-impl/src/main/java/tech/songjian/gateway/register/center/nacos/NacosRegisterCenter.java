@@ -127,7 +127,7 @@ public class NacosRegisterCenter implements RegisterCenter {
         ScheduledExecutorService scheduledThreadPool =
                 Executors.newScheduledThreadPool(1, new NameThreadFactory("doSubscribeAllServices"));
         // 每10s执行一次
-        scheduledThreadPool.schedule(() -> doSubscribeAllServices(), 10, 10, TimeUnit.SECONDS);
+        scheduledThreadPool.scheduleWithFixedDelay(() -> doSubscribeAllServices(), 10, 10, TimeUnit.SECONDS);
     }
 
     private void doSubscribeAllServices() {
