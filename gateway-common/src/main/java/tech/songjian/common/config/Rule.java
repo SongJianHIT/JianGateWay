@@ -2,6 +2,7 @@ package tech.songjian.common.config;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -32,6 +33,45 @@ public class Rule implements Comparable<Rule>, Serializable {
      * 规则排序，对应场景：一个路径对应多条规则，然后只执行一条规则的情况
      */
     private Integer order;
+
+    /**
+     * 后端服务id
+     */
+    private String serviceId;
+
+    /**
+     * 请求前缀
+     */
+    private String prefix;
+
+    /**
+     * 路径集合
+     */
+    private List<String> paths;
+
+    public String getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public List<String> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(List<String> paths) {
+        this.paths = paths;
+    }
 
     private Set<FilterConfig> filterConfigs =new HashSet<>();
 
@@ -79,11 +119,16 @@ public class Rule implements Comparable<Rule>, Serializable {
         super();
     }
 
-    public Rule(String id, String name, String protocol, Integer order, Set<FilterConfig> filterConfigs) {
+    public Rule(String id, String name, String protocol,
+                Integer order, String serviceId, String prefix,
+                List<String> paths, Set<FilterConfig> filterConfigs) {
         this.id = id;
         this.name = name;
         this.protocol = protocol;
         this.order = order;
+        this.serviceId = serviceId;
+        this.prefix = prefix;
+        this.paths = paths;
         this.filterConfigs = filterConfigs;
     }
 

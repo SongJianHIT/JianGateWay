@@ -19,6 +19,8 @@ import tech.songjian.common.exception.ConnectException;
 import tech.songjian.common.exception.ResponseException;
 import tech.songjian.core.ConfigLoader;
 import tech.songjian.core.context.GatewayContext;
+import tech.songjian.core.filter.FilterFactory;
+import tech.songjian.core.filter.GatewayFilterChainFactory;
 import tech.songjian.core.helper.AsyncHttpHelper;
 import tech.songjian.core.helper.RequestHelper;
 import tech.songjian.core.helper.ResponseHelper;
@@ -38,6 +40,9 @@ import java.util.concurrent.TimeoutException;
  */
 @Slf4j
 public class NettyCoreProcessor implements NettyProcessor{
+
+    private FilterFactory filterFactory = GatewayFilterChainFactory.getInstance();
+
     @Override
     public void process(HttpRequestWrapper httpRequestWrapper) {
         // 拿到具体的参数
@@ -46,6 +51,9 @@ public class NettyCoreProcessor implements NettyProcessor{
 
         try {
             GatewayContext gatewayContext = RequestHelper.doContext(request, ctx);
+            // 执行过滤器逻辑
+            filterFactory.buildFilterChain(gatewayContext).doFilter(gatewayContext);
+
             // 进行路由
             route(gatewayContext);
         } catch (BaseException e) {

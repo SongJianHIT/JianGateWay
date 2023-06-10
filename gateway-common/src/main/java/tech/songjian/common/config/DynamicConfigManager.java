@@ -1,25 +1,42 @@
 package tech.songjian.common.config;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.checkerframework.checker.units.qual.A;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import static tech.songjian.common.constants.BasicConst.DIT_SEPARATOR;
 
 /**
  * 动态服务缓存配置管理类
  */
 public class DynamicConfigManager {
 
-	//	服务的定义集合：uniqueId 代表服务的唯一标识
+	/**
+	 * 服务的定义集合：uniqueId 代表服务的唯一标识
+	 */
 	private ConcurrentHashMap<String /* uniqueId */ , ServiceDefinition>  serviceDefinitionMap = new ConcurrentHashMap<>();
 
-	//	服务的实例集合：uniqueId 与一对服务实例对应
+	/**
+	 * 服务的实例集合：uniqueId 与一对服务实例对应
+	 */
 	private ConcurrentHashMap<String /* uniqueId */ , Set<ServiceInstance>>  serviceInstanceMap = new ConcurrentHashMap<>();
 
-	//	规则集合
+	/**
+	 * 规则集合
+	 */
 	private ConcurrentHashMap<String /* ruleId */ , Rule>  ruleMap = new ConcurrentHashMap<>();
+
+	/**
+	 * 路径以及规则集合
+	 */
+	private ConcurrentHashMap<String /* 路径 */, Rule> pathRuleMap = new ConcurrentHashMap<>();
+
+	/**
+	 * 服务以及规则集合
+	 */
+	private ConcurrentHashMap<String /* 服务名 */, List<Rule>> serverRuleMap = new ConcurrentHashMap<>();
 
 	private DynamicConfigManager() {
 	}
@@ -105,9 +122,28 @@ public class DynamicConfigManager {
 	}
 
 	public void putAllRule(List<Rule> ruleList) {
-		Map<String, Rule> map = ruleList.stream()
-				.collect(Collectors.toMap(Rule::getId, r -> r));
-		ruleMap = new ConcurrentHashMap<>(map);
+		ConcurrentHashMap<String, Rule> newRuleMap = new ConcurrentHashMap<>();
+		ConcurrentHashMap<String, Rule> newPathMap = new ConcurrentHashMap<>();
+		ConcurrentHashMap<String, List<Rule>> newServiceMap = new ConcurrentHashMap<>();
+
+		for (Rule rule : ruleList) {
+			newRuleMap.put(rule.getId(), rule);
+			List<Rule> rules = newServiceMap.get(rule.getServiceId());
+			if (rules == null) {
+				rules = new ArrayList<>();
+			}
+			rules.add(rule);
+			newServiceMap.put(rule.getServiceId(), rules);
+
+			List<String> paths = rule.getPaths();
+			for (String path : paths) {
+				String key = rule.getServiceId() + DIT_SEPARATOR + path;
+				newPathMap.put(key, rule);
+			}
+		}
+		ruleMap = newRuleMap;
+		pathRuleMap = newPathMap;
+		serverRuleMap = newServiceMap;
 	}
 
 	public Rule getRule(String ruleId) {
@@ -122,5 +158,21 @@ public class DynamicConfigManager {
 		return ruleMap;
 	}
 
+	/**
+	 * 根据路径获取规则
+	 * @param path
+	 * @return
+	 */
+	public Rule getRuleByPath (String path) {
+		return pathRuleMap.get(path);
+	}
 
+	/**
+	 * 根据服务id获取规则集合
+	 * @param serviceId
+	 * @return
+	 */
+	public List<Rule> getRuleByServiceId(String serviceId) {
+		return serverRuleMap.get(serviceId);
+	}
 }

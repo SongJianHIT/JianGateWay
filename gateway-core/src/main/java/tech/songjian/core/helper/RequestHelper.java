@@ -5,13 +5,12 @@ import io.netty.handler.codec.http.*;
 import org.apache.commons.lang3.StringUtils;
 
 
-import tech.songjian.common.config.HttpServiceInvoker;
-import tech.songjian.common.config.Rule;
-import tech.songjian.common.config.ServiceDefinition;
-import tech.songjian.common.config.ServiceInvoker;
+import tech.songjian.common.config.*;
 import tech.songjian.common.constants.BasicConst;
 import tech.songjian.common.constants.GatewayConst;
 import tech.songjian.common.constants.GatewayProtocol;
+import tech.songjian.common.enums.ResponseCode;
+import tech.songjian.common.exception.ResponseException;
 import tech.songjian.core.context.GatewayContext;
 import tech.songjian.core.request.GatewayRequest;
 
@@ -21,9 +20,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
+import static tech.songjian.common.constants.BasicConst.DIT_SEPARATOR;
+
 
 public class RequestHelper {
 
+	/**
+	 * 根据请求和 netty 上下文构建 网关的上下文
+	 * @param request
+	 * @param ctx
+	 * @return
+	 */
 	public static GatewayContext doContext(FullHttpRequest request, ChannelHandlerContext ctx) {
 
 		//	构建请求对象 GatewayRequest
@@ -32,7 +39,7 @@ public class RequestHelper {
 		//	根据请求对象里的 uniqueId，获取资源服务信息(也就是服务定义信息)
 		// TODO 先写死
 		ServiceDefinition serviceDefinition = ServiceDefinition.builder()
-				.serviceId("demo")
+				.serviceId(gateWayRequest.getUniqueId())
 				.enable(true)
 				.version("v1")
 				.patternPath("**")
@@ -46,6 +53,8 @@ public class RequestHelper {
 		serviceInvoker.setInvokerPath(gateWayRequest.getPath());
 		serviceInvoker.setTimeout(500);
 
+		// 根据请求对象，获取规则
+		Rule rule = getRule(gateWayRequest);
 
 		//	构建我们而定 GateWayContext 对象
 		GatewayContext gatewayContext = new GatewayContext(
@@ -53,7 +62,7 @@ public class RequestHelper {
 				ctx,
 				HttpUtil.isKeepAlive(request),
 				gateWayRequest,
-				new Rule());
+				rule);
 
 
 		// 后续服务发现做完，这里都要改成动态的
@@ -111,5 +120,20 @@ public class RequestHelper {
 		return clientIp;
 	}
 
+	/**
+	 * 根据请求，获取 Rule 对象
+	 * @param gateWayRequest
+	 * @return
+	 */
+	private static Rule getRule(GatewayRequest gateWayRequest) {
+		String key = gateWayRequest.getUniqueId() + DIT_SEPARATOR + gateWayRequest.getPath();
+		Rule rule = DynamicConfigManager.getInstance().getRuleByPath(key);
 
+		if (rule != null) {
+			return rule;
+		}
+		return DynamicConfigManager.getInstance().getRuleByServiceId(gateWayRequest.getUniqueId())
+				.stream().filter(r -> gateWayRequest.getPath().startsWith(r.getPrefix()))
+				.findAny().orElseThrow(() -> new ResponseException(ResponseCode.PATH_NO_MATCHED));
+	}
 }
