@@ -68,7 +68,7 @@ public class SpringMVCClientRegisterManager
             try {
                 doRegisterSpringMvc();
             } catch (Exception e) {
-                log.info("springmvc api started");
+                log.info("doRegisterSpringMvc error");
                 throw new RuntimeException(e);
             }
         }
