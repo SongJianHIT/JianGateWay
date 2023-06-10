@@ -18,6 +18,7 @@ import tech.songjian.gateway.register.center.api.RegisterCenterListener;
 
 
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 
 import static tech.songjian.common.constants.BasicConst.COLON_SEPARATOR;
@@ -39,15 +40,24 @@ public class Bootstrap {
         // 2、插件初始化
 
         // 3、配置中心管理器初始化：连接配置中心，监听配置中心的新增、修改、删除
-        ConfigCenter configCenter = null;
-        configCenter.subscribeRulesChange(rules -> DynamicConfigManager.getInstance().putAllRule(rules));
+        /**
+         * ServiceLoader 它用来实现 SPI(Service Provider Interface)，一种服务发现机制，很多框架用它来做来做服务的扩展发现。
+         */
+        ServiceLoader<ConfigCenter> serviceLoader = ServiceLoader.load(ConfigCenter.class);
+        final ConfigCenter configCenter = serviceLoader.findFirst().orElseThrow(() -> {
+            log.error("not found ConfigCenter impl");
+            return new RuntimeException("not found ConfigCenter impl");
+        });
+        configCenter.init(config.getRegistryAddress(), config.getEnv());
+        configCenter.subscribeRulesChange(rules -> DynamicConfigManager.getInstance()
+                .putAllRule(rules));
 
         // 4、启动容器
         Container container = new Container(config);
         container.start();
 
         // 5、连接注册中心，将注册中心的实例加载到本地
-        RegisterCenter registerCenter = registerAndSubscribe(config);
+        final RegisterCenter registerCenter = registerAndSubscribe(config);
 
         // 6、服务优雅关机
         // 进程收到 kill 信号的时候调用
@@ -56,6 +66,7 @@ public class Bootstrap {
             public void run() {
                 registerCenter.deregister(buildGatewayServiceDefinition(config),
                         buildGatewayServiceInstance(config));
+                container.shutdown();
             }
         });
     }
@@ -66,7 +77,15 @@ public class Bootstrap {
      * @return
      */
     private static RegisterCenter registerAndSubscribe(Config config) {
-        RegisterCenter registerCenter = null;
+
+        ServiceLoader<RegisterCenter> serviceLoader = ServiceLoader.load(RegisterCenter.class);
+        final RegisterCenter registerCenter = serviceLoader.findFirst().orElseThrow(() -> {
+            log.error("not found RegisterCenter impl");
+            return new RuntimeException("not found RegisterCenter impl");
+        });
+
+        // 注册中心初始化
+        registerCenter.init(config.getRegistryAddress(), config.getEnv());
 
         // 5.1、构造网关服务定义和服务实例
         ServiceDefinition serviceDefinition = buildGatewayServiceDefinition(config);
@@ -74,13 +93,15 @@ public class Bootstrap {
 
         // 5.2、注册
         registerCenter.register(serviceDefinition, serviceInstance);
+
         // 5.3 订阅所有服务
         registerCenter.subscribeAllServices(new RegisterCenterListener() {
             @Override
             public void onChange(ServiceDefinition serviceDefinition, Set<ServiceInstance> serviceInstanceSet) {
-                log.info("refresh service and instance: {} {}", serviceDefinition.getUniqueId(), JSON.toJSON(serviceInstanceSet));
+                log.info("refresh service and instance: {} {}", serviceDefinition.getUniqueId(),
+                        JSON.toJSON(serviceInstanceSet));
                 DynamicConfigManager manager = DynamicConfigManager.getInstance();
-                manager.addServiceInstance(serviceInstance.getUniqueId(), serviceInstanceSet);
+                manager.addServiceInstance(serviceDefinition.getUniqueId(), serviceInstanceSet);
             }
         });
         return registerCenter;

@@ -29,7 +29,7 @@ public class Config {
     /**
      * 配置中心地址
      */
-    private String registryAddr = "127.0.0.1:8848";
+    private String registryAddress = "127.0.0.1:8848";
 
     /**
      * 开发环境

@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -44,40 +45,27 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class NacosRegisterCenter implements RegisterCenter {
-
-    /**
-     * 注册中心地址
-     */
     private String registerAddress;
 
-    /**
-     * 环境
-     */
     private String env;
 
-    /**
-     * 主要用于维护服务实例信息
-     */
+    //主要用于维护服务实例信息
     private NamingService namingService;
 
-    /**
-     * 主要用于维护服务定义信息
-     */
+    //主要用于维护服务定义信息
     private NamingMaintainService namingMaintainService;
 
-    /**
-     * 注册中心监听器列表
-     */
-    private List<RegisterCenterListener> registerCenterListenerList;
+    //监听器列表
+    private List<RegisterCenterListener> registerCenterListenerList = new CopyOnWriteArrayList<>();
 
     @Override
-    public void init(String regsiterAddress, String env) {
-        this.registerAddress = regsiterAddress;
+    public void init(String registerAddress, String env) {
+        this.registerAddress = registerAddress;
         this.env = env;
 
         try {
-            this.namingMaintainService = NamingMaintainFactory.createMaintainService(regsiterAddress);
-            this.namingService = NamingFactory.createNamingService(regsiterAddress);
+            this.namingMaintainService = NamingMaintainFactory.createMaintainService(registerAddress);
+            this.namingService = NamingFactory.createNamingService(registerAddress);
         } catch (NacosException e) {
             throw new RuntimeException(e);
         }
@@ -87,19 +75,20 @@ public class NacosRegisterCenter implements RegisterCenter {
     @Override
     public void register(ServiceDefinition serviceDefinition, ServiceInstance serviceInstance) {
         try {
-            // 构造 Nacos 的实例信息
+            //构造nacos实例信息
             Instance nacosInstance = new Instance();
             nacosInstance.setInstanceId(serviceInstance.getServiceInstanceId());
             nacosInstance.setPort(serviceInstance.getPort());
             nacosInstance.setIp(serviceInstance.getIp());
             nacosInstance.setMetadata(Map.of(GatewayConst.META_DATA_KEY,
                     JSON.toJSONString(serviceInstance)));
-            // 注册
+
+            //注册
             namingService.registerInstance(serviceDefinition.getServiceId(), env, nacosInstance);
 
-            // 更新服务定义
-            namingMaintainService.updateService(serviceDefinition.getServiceId(), env,
-                    0, Map.of(GatewayConst.META_DATA_KEY, JSON.toJSONString(serviceDefinition)));
+            //更新服务定义
+            namingMaintainService.updateService(serviceDefinition.getServiceId(), env, 0,
+                    Map.of(GatewayConst.META_DATA_KEY, JSON.toJSONString(serviceDefinition)));
 
             log.info("register {} {}", serviceDefinition, serviceInstance);
         } catch (NacosException e) {
@@ -110,9 +99,8 @@ public class NacosRegisterCenter implements RegisterCenter {
     @Override
     public void deregister(ServiceDefinition serviceDefinition, ServiceInstance serviceInstance) {
         try {
-            // TODO 注销
-            namingService.deregisterInstance(serviceDefinition.getServiceId(), env,
-                    serviceInstance.getIp(), serviceInstance.getPort());
+            namingService.registerInstance(serviceDefinition.getServiceId(),
+                    env, serviceInstance.getIp(), serviceInstance.getPort());
         } catch (NacosException e) {
             throw new RuntimeException(e);
         }
@@ -123,26 +111,27 @@ public class NacosRegisterCenter implements RegisterCenter {
         registerCenterListenerList.add(registerCenterListener);
         doSubscribeAllServices();
 
-        // 可能有新服务加入，因此需要有一个定时任务来检查
-        ScheduledExecutorService scheduledThreadPool =
-                Executors.newScheduledThreadPool(1, new NameThreadFactory("doSubscribeAllServices"));
-        // 每10s执行一次
-        scheduledThreadPool.scheduleWithFixedDelay(() -> doSubscribeAllServices(), 10, 10, TimeUnit.SECONDS);
+        //可能有新服务加入，所以需要有一个定时任务来检查
+        ScheduledExecutorService scheduledThreadPool = Executors
+                .newScheduledThreadPool(1, new NameThreadFactory("doSubscribeAllServices"));
+        scheduledThreadPool.scheduleWithFixedDelay(() -> doSubscribeAllServices(),
+                10, 10, TimeUnit.SECONDS);
+
     }
 
     private void doSubscribeAllServices() {
         try {
-            // 已经订阅的服务
+            //已经订阅的服务
             Set<String> subscribeService = namingService.getSubscribeServices().stream()
                     .map(ServiceInfo::getName).collect(Collectors.toSet());
+
 
             int pageNo = 1;
             int pageSize = 100;
 
-            // nacos 事件监听器
-            EventListener eventListener = new NacosRegisterListener();
 
-            // 分页从 nacos 拿到服务列表
+
+            //分页从nacos拿到服务列表
             List<String> serviseList = namingService
                     .getServicesOfServer(pageNo, pageSize, env).getData();
 
@@ -150,12 +139,14 @@ public class NacosRegisterCenter implements RegisterCenter {
                 log.info("service list size {}", serviseList.size());
 
                 for (String service : serviseList) {
-                    // 判断是否订阅过，如果订阅过则不处理
                     if (subscribeService.contains(service)) {
                         continue;
                     }
-                    // 没有订阅则进行订阅
-                    namingService.subscribe(service, eventListener);
+
+                    //nacos事件监听器
+                    EventListener eventListener = new NacosRegisterListener();
+                    eventListener.onEvent(new NamingEvent(service, null));
+                    namingService.subscribe(service, env, eventListener);
                     log.info("subscribe {} {}", service, env);
                 }
 
@@ -177,18 +168,16 @@ public class NacosRegisterCenter implements RegisterCenter {
                 String serviceName = namingEvent.getServiceName();
 
                 try {
-                    // 获取服务定义信息
+                    //获取服务定义信息
                     Service service = namingMaintainService.queryService(serviceName, env);
-                    // 反序列化
                     ServiceDefinition serviceDefinition = JSON.parseObject(service.getMetadata()
                             .get(GatewayConst.META_DATA_KEY), ServiceDefinition.class);
 
-                    // 获取服务实例信息
-                    List<Instance> allInstances = namingService.getAllInstances(serviceName, env);
+                    //获取服务实例信息
+                    List<Instance> allInstances = namingService.getAllInstances(service.getName(), env);
                     Set<ServiceInstance> set = new HashSet<>();
 
                     for (Instance instance : allInstances) {
-                        // 反序列化
                         ServiceInstance serviceInstance = JSON.parseObject(instance.getMetadata()
                                 .get(GatewayConst.META_DATA_KEY), ServiceInstance.class);
                         set.add(serviceInstance);
@@ -199,10 +188,7 @@ public class NacosRegisterCenter implements RegisterCenter {
                 } catch (NacosException e) {
                     throw new RuntimeException(e);
                 }
-
-
             }
         }
     }
 }
-

@@ -40,10 +40,11 @@ public abstract class AbstractClientRegisterManager {
 
         // 初始化注册中心对象
         ServiceLoader<RegisterCenter> serviceLoader = ServiceLoader.load(RegisterCenter.class);
-        serviceLoader.findFirst().orElseThrow(() -> {
-            log.error("not find RegisterCenter impl");
-            return new RuntimeException("not find RegisterCenter impl");
+        registerCenter = serviceLoader.findFirst().orElseThrow(() -> {
+            log.error("not found RegisterCenter impl");
+            return new RuntimeException("not found RegisterCenter impl");
         });
+        registerCenter.init(apiProperties.getRegisterAddress(), apiProperties.getEnv());
     }
 
     /**

@@ -69,6 +69,7 @@ public class NettyHttpClient implements LifeCycle {
 
     @Override
     public void start() {
+        // 这里调用辅助类 AsyncHttpHelper，构造一个单例 asyncHttpClient
         AsyncHttpHelper.getInstance().initialized(asyncHttpClient);
     }
 
