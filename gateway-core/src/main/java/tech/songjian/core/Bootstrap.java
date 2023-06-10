@@ -12,6 +12,7 @@ import tech.songjian.common.config.ServiceDefinition;
 import tech.songjian.common.config.ServiceInstance;
 import tech.songjian.common.utils.NetUtils;
 import tech.songjian.common.utils.TimeUtil;
+import tech.songjian.gateway.config.center.api.ConfigCenter;
 import tech.songjian.gateway.register.center.api.RegisterCenter;
 import tech.songjian.gateway.register.center.api.RegisterCenterListener;
 
@@ -38,6 +39,8 @@ public class Bootstrap {
         // 2、插件初始化
 
         // 3、配置中心管理器初始化：连接配置中心，监听配置中心的新增、修改、删除
+        ConfigCenter configCenter = null;
+        configCenter.subscribeRulesChange(rules -> DynamicConfigManager.getInstance().putAllRule(rules));
 
         // 4、启动容器
         Container container = new Container(config);

@@ -15,6 +15,7 @@
     <module>backend-dubbo-server</module>
       <module>gateway-register-center/gateway-register-center-api</module>
       <module>gateway-register-center/gateway-register-center-nacos-impl</module>
+      <module>gateway-config-center/gateway-config-center-api</module>
   </modules>
   <packaging>pom</packaging>
 
