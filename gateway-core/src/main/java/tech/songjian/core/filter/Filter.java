@@ -16,6 +16,11 @@ import tech.songjian.core.context.GatewayContext;
  */
 public interface Filter {
 
+    /**
+     * 执行过滤器
+     * @param ctx
+     * @throws Exception
+     */
     void doFilter(GatewayContext ctx) throws Exception;
 
     /**

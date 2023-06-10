@@ -116,9 +116,11 @@ public class Rule implements Comparable<Rule>, Serializable {
 
         @Override
         public  boolean equals(Object o){
-            if (this == o) return  true;
+            if (this == o) {
+                return  true;
+            }
 
-            if((o== null) || getClass() != o.getClass()){
+            if ((o== null) || getClass() != o.getClass()) {
                 return false;
             }
 
@@ -127,7 +129,7 @@ public class Rule implements Comparable<Rule>, Serializable {
         }
 
         @Override
-        public  int hashCode(){
+        public  int hashCode (){
             return Objects.hash(id);
         }
     }
@@ -137,7 +139,7 @@ public class Rule implements Comparable<Rule>, Serializable {
      * @param filterConfig
      * @return
      */
-     public boolean addFilterConfig(FilterConfig filterConfig){
+     public boolean addFilterConfig (FilterConfig filterConfig){
             return filterConfigs.add(filterConfig);
      }
 
@@ -146,12 +148,11 @@ public class Rule implements Comparable<Rule>, Serializable {
      * @param id
      * @return
      */
-     public  FilterConfig getFilterConfig(String id){
-         for(FilterConfig config:filterConfigs){
-             if(config.getId().equalsIgnoreCase(id)){
-                return  config;
+     public FilterConfig getFilterConfig (String id) {
+         for (FilterConfig config:filterConfigs) {
+             if (config.getId().equalsIgnoreCase(id)) {
+                return config;
              }
-
          }
          return null;
      }
@@ -160,10 +161,10 @@ public class Rule implements Comparable<Rule>, Serializable {
      * 根据filterID判断当前Rule是否存在
      * @return
      */
-    public boolean hashId(){
+    public boolean hashId() {
         for(FilterConfig config:filterConfigs){
             if(config.getId().equalsIgnoreCase(id)){
-                return  true;
+                return true;
             }
         }
         return false;
@@ -172,7 +173,7 @@ public class Rule implements Comparable<Rule>, Serializable {
 
     @Override
     public int compareTo(Rule o) {
-        int  orderCompare = Integer.compare(getOrder(),o.getOrder());
+        int orderCompare = Integer.compare(getOrder(),o.getOrder());
         if(orderCompare == 0){
           return getId().compareTo(o.getId());
         }
