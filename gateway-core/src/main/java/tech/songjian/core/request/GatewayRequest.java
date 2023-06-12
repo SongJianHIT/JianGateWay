@@ -12,7 +12,8 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import lombok.Getter;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.asynchttpclient.Request;
 import org.asynchttpclient.RequestBuilder;
 import tech.songjian.common.constants.BasicConst;
@@ -302,7 +303,7 @@ public class GatewayRequest implements IGatewayRequest{
     }
 
     @Override
-    public void addOrReplaceCookie(Cookie cookie) {
+    public void addOrReplaceCookie(org.asynchttpclient.cookie.Cookie cookie) {
         requestBuilder.addOrReplaceCookie(cookie);
     }
 

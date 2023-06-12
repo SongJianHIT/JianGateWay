@@ -1,5 +1,7 @@
 package tech.songjian.common.config;
 
+import lombok.Data;
+
 import java.io.PipedReader;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -54,10 +56,20 @@ public class Rule implements Comparable<Rule>, Serializable {
 
     private RetryConfig retryConfig = new RetryConfig();
 
+    private Set<HystrixConfig> hystrixConfigs = new HashSet<>();
+
     /**
      * 限流规则配置
      */
     private Set<FlowCtlConfig> flowCtlConfigs =new HashSet<>();
+
+    public Set<HystrixConfig> getHystrixConfigs() {
+        return hystrixConfigs;
+    }
+
+    public void setHystrixConfigs(Set<HystrixConfig> hystrixConfigs) {
+        this.hystrixConfigs = hystrixConfigs;
+    }
 
     public String getServiceId() {
         return serviceId;
@@ -342,5 +354,16 @@ public class Rule implements Comparable<Rule>, Serializable {
         public void setConfig(String config) {
             this.config = config;
         }
+    }
+
+    /**
+     * --------------------------------------  熔断限流配置内部类  -----------------
+     */
+    @Data
+    public static class HystrixConfig {
+        private String path;
+        private int timeoutInMilliseconds;
+        private int threadCoreSize;
+        private String fallbackResponse;
     }
 }

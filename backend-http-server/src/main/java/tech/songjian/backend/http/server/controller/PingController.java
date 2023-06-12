@@ -20,8 +20,9 @@ public class PingController {
 
     @ApiInvoker(path = "/http-server/ping")
     @GetMapping("/http-server/ping")
-    public String ping() {
+    public String ping() throws InterruptedException {
         log.info("{}", apiProperties);
+        Thread.sleep(200000);
         return "pong";
     }
 

@@ -1,6 +1,8 @@
 package tech.songjian.core.filter.router;
 
+import com.netflix.hystrix.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.asynchttpclient.Request;
 import org.asynchttpclient.Response;
 import tech.songjian.common.config.Rule;
@@ -17,6 +19,7 @@ import tech.songjian.core.response.GatewayResponse;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
@@ -43,6 +46,52 @@ public class RouterFilter implements Filter {
      */
     @Override
     public void doFilter(GatewayContext gatewayContext) throws Exception {
+
+        // Optional 可以对可能缺失的值进行建模，而不是直接将 null 赋值给变量。
+        Optional<Rule.HystrixConfig> hystrixConfig = getHystrixConfig(gatewayContext);
+        if (hystrixConfig.isPresent()) {
+            // 熔断异常发送路由
+            routeWithHystrix(gatewayContext, hystrixConfig);
+        } else {
+            // 无熔断异常发送请求
+            route(gatewayContext, hystrixConfig);
+        }
+    }
+
+    private void routeWithHystrix(GatewayContext gatewayContext, Optional<Rule.HystrixConfig> hystrixConfig) {
+        HystrixCommand.Setter setter = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey
+                .Factory
+                .asKey(gatewayContext.getUniqueId()))
+                .andCommandKey(HystrixCommandKey.Factory
+                        .asKey(gatewayContext.getRequest().getPath()))
+                // 定义线程池大小
+                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()
+                        .withCoreSize(hystrixConfig.get().getThreadCoreSize()))
+                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
+                        // 定义线程池隔离方式
+                        .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.THREAD)
+                        // 定义超时时间
+                        .withExecutionTimeoutInMilliseconds(hystrixConfig.get().getTimeoutInMilliseconds())
+                        .withExecutionIsolationThreadInterruptOnTimeout(true)
+                        .withExecutionTimeoutEnabled(true));
+        new HystrixCommand<Object> (setter) {
+            @Override
+            protected Object run() throws Exception {
+                route(gatewayContext, hystrixConfig).get();
+                return null;
+            }
+
+            @Override
+            protected Object getFallback() {
+                gatewayContext.setResponse(hystrixConfig);
+                gatewayContext.setWritten();
+                return null;
+            }
+        }.execute();
+
+    }
+
+    private CompletableFuture<Response> route (GatewayContext gatewayContext, Optional<Rule.HystrixConfig> hystrixConfig) {
         Request request = gatewayContext.getRequest().build();
         // 发起请求
         CompletableFuture<Response> future = AsyncHttpHelper.getInstance().executeRequest(request);
@@ -51,17 +100,30 @@ public class RouterFilter implements Filter {
         if (whenComplete) {
             // 单异步模式
             future.whenComplete((response, throwable) -> {
-                complete(request, response, throwable, gatewayContext);
+                complete(request, response, throwable, gatewayContext, hystrixConfig);
             });
         } else {
             // 双异步模式
             future.whenCompleteAsync((response, throwable) -> {
-                complete(request, response, throwable, gatewayContext);
+                complete(request, response, throwable, gatewayContext, hystrixConfig);
             });
         }
+        return future;
     }
 
-    private void complete(Request request, Response response, Throwable throwable, GatewayContext gatewayContext) {
+
+    private static Optional<Rule.HystrixConfig> getHystrixConfig (GatewayContext gatewayContext) {
+        Rule rule = gatewayContext.getRule();
+        Optional<Rule.HystrixConfig> hystrixConfig = rule.getHystrixConfigs().stream()
+                .filter(c -> StringUtils.equals(c.getPath(), gatewayContext.getRequest().getPath())).findFirst();
+        return hystrixConfig;
+    }
+
+    private void complete(Request request,
+                          Response response,
+                          Throwable throwable,
+                          GatewayContext gatewayContext,
+                          Optional<Rule.HystrixConfig> hystrixConfig) {
         // 释放请求资源
         gatewayContext.releaseRequest();
 
@@ -73,8 +135,8 @@ public class RouterFilter implements Filter {
         // 重试条件
         if ((throwable instanceof TimeoutException
                 || throwable instanceof IOException)
-                && currentRetryTimes <= confRetryTimes) {
-            dpRetry(gatewayContext, currentRetryTimes);
+                && currentRetryTimes <= confRetryTimes && !hystrixConfig.isPresent()) {
+            doRetry(gatewayContext, currentRetryTimes);
             return;
         }
 
@@ -110,7 +172,7 @@ public class RouterFilter implements Filter {
      * @param gatewayContext
      * @param currentRetryTimes
      */
-    private void dpRetry(GatewayContext gatewayContext, int currentRetryTimes) {
+    private void doRetry(GatewayContext gatewayContext, int currentRetryTimes) {
         // 重试次数 + 1
         System.out.println("当前重试次数为：" + currentRetryTimes);
         gatewayContext.setCurrentRetryTimes(currentRetryTimes + 1);

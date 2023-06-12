@@ -5,7 +5,7 @@
  */
 package tech.songjian.core.request;
 
-import io.netty.handler.codec.http.cookie.Cookie;
+import org.asynchttpclient.cookie.Cookie;
 import org.asynchttpclient.Request;
 
 /**

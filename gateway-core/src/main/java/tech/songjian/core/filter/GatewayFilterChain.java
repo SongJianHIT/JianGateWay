@@ -64,7 +64,7 @@ public class GatewayFilterChain {
             }
         } catch (Exception e) {
             // 发生异常后处理
-            log.error("filter chain doFilter error {}", e.getMessage());
+            log.error("执行过滤器发生异常,异常信息：{}", e.getMessage());
         }
         return ctx;
     }

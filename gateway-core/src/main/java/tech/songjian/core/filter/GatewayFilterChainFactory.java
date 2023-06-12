@@ -6,7 +6,7 @@
 package tech.songjian.core.filter;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import tech.songjian.common.config.Rule;
 import tech.songjian.core.context.GatewayContext;
 import tech.songjian.core.filter.router.RouterFilter;
@@ -46,7 +46,7 @@ public class GatewayFilterChainFactory implements FilterFactory{
                 if(StringUtils.isEmpty(filterId)){
                     filterId = filter.getClass().getName();
                 }
-                processorFilterIdMap.put(filterId, filter);
+                processorFilterIdMap.putIfAbsent(filterId, filter);
             }
         });
     }
