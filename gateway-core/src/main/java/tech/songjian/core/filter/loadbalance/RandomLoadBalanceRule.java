@@ -15,6 +15,7 @@ import tech.songjian.core.context.GatewayContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -29,14 +30,24 @@ public class RandomLoadBalanceRule implements IGatewayLoadBalanceRule{
 
     private final String serviceId;
 
-    private Set<ServiceInstance> serviceInstanceSet;;
+    private Set<ServiceInstance> serviceInstanceSet;
 
     public RandomLoadBalanceRule(String serviceId) {
         this.serviceId = serviceId;
-
-        // 从注册中心中拿到服务实例集合
-        this.serviceInstanceSet = DynamicConfigManager.getInstance().getServiceInstanceByUniqueId(serviceId);
     }
+
+    private static ConcurrentHashMap<String, RandomLoadBalanceRule> serviceMap = new ConcurrentHashMap<>();
+
+    public static RandomLoadBalanceRule getInstance(String serviceId) {
+        // 先尝试从 serviceMap 中拿
+        RandomLoadBalanceRule loadBalanceRule = serviceMap.get(serviceId);
+        if (loadBalanceRule == null) {
+            loadBalanceRule = new RandomLoadBalanceRule(serviceId);
+            serviceMap.put(serviceId, loadBalanceRule);
+        }
+        return loadBalanceRule;
+    }
+
 
     @Override
     public ServiceInstance choose(GatewayContext context) {
@@ -46,9 +57,7 @@ public class RandomLoadBalanceRule implements IGatewayLoadBalanceRule{
 
     @Override
     public ServiceInstance choose(String serviceId) {
-        if (serviceInstanceSet.isEmpty()) {
-            serviceInstanceSet = DynamicConfigManager.getInstance().getServiceInstanceByUniqueId(serviceId);
-        }
+        Set<ServiceInstance> serviceInstanceSet = DynamicConfigManager.getInstance().getServiceInstanceByUniqueId(serviceId);
         if (serviceInstanceSet.isEmpty()) {
             log.warn("No instance available for: {}", serviceId);
             throw new NotFoundException(ResponseCode.SERVICE_INSTANCE_NOT_FOUND);

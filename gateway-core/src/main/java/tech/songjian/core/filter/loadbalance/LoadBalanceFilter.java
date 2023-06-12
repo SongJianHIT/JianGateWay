@@ -83,14 +83,14 @@ public class LoadBalanceFilter implements Filter {
                     }
                     switch (strategy) {
                         case LOAD_BALANCE_STRATEGY_RANDOM:
-                            loadBalanceRule = new RandomLoadBalanceRule(ctx.getUniqueId());
+                            loadBalanceRule = RandomLoadBalanceRule.getInstance(configRule.getServiceId());
                             break;
                         case LOAD_BALANCE_STRATEGY_ROUND_ROBIN:
-                            loadBalanceRule = new RoundRobinLoadBalanceRule(new AtomicInteger(1), ctx.getUniqueId());
+                            loadBalanceRule = RoundRobinLoadBalanceRule.getInstance(configRule.getServiceId());
                             break;
                         default:
                             log.warn("No loadBalance strategy for service: {}", strategy);
-                            loadBalanceRule = new RandomLoadBalanceRule(ctx.getUniqueId());
+                            loadBalanceRule = RandomLoadBalanceRule.getInstance(configRule.getServiceId());
                             break;
                     }
                 }

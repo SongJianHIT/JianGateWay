@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -32,20 +33,26 @@ public class RoundRobinLoadBalanceRule implements IGatewayLoadBalanceRule{
     /**
      * 当前轮询到的位置，需要保证线程安全
      */
-    private final AtomicInteger position;
+    private AtomicInteger position = new AtomicInteger(1);
 
     private final String serviceId;
 
-    private Set<ServiceInstance> serviceInstanceSet;;
-
-    public RoundRobinLoadBalanceRule(AtomicInteger position, String serviceId) {
-        this.position = position;
+    public RoundRobinLoadBalanceRule(String serviceId) {
         this.serviceId = serviceId;
-
-        // 从注册中心中拿到服务实例集合
-        this.serviceInstanceSet = DynamicConfigManager.getInstance().getServiceInstanceByUniqueId(serviceId);
     }
 
+    private static ConcurrentHashMap<String, RoundRobinLoadBalanceRule> serviceMap = new ConcurrentHashMap<>();
+
+    public static RoundRobinLoadBalanceRule getInstance(String serviceId) {
+        // 先尝试从 serviceMap 中拿
+        RoundRobinLoadBalanceRule loadBalanceRule = serviceMap.get(serviceId);
+        if (loadBalanceRule == null) {
+            // 没有，才进行创建，此时 position = 1
+            loadBalanceRule = new RoundRobinLoadBalanceRule(serviceId);
+            serviceMap.put(serviceId, loadBalanceRule);
+        }
+        return loadBalanceRule;
+    }
 
     @Override
     public ServiceInstance choose(GatewayContext context) {
@@ -55,10 +62,8 @@ public class RoundRobinLoadBalanceRule implements IGatewayLoadBalanceRule{
 
     @Override
     public ServiceInstance choose(String serviceId) {
-        if (serviceInstanceSet.size() == 0) {
-            serviceInstanceSet = DynamicConfigManager.getInstance().getServiceInstanceByUniqueId(serviceId);
-        }
-        if (serviceInstanceSet.size() == 0) {
+        Set<ServiceInstance> serviceInstanceSet = DynamicConfigManager.getInstance().getServiceInstanceByUniqueId(serviceId);
+        if (serviceInstanceSet.isEmpty()) {
             log.warn("No instance available for: {}", serviceId);
             throw new NotFoundException(ResponseCode.SERVICE_INSTANCE_NOT_FOUND);
         }

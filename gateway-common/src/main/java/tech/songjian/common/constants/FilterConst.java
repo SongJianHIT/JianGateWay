@@ -24,7 +24,7 @@ public interface FilterConst {
 
     String LOAD_BALANCE_KEY = "load_balancer";
 
-    String LOAD_BALANCE_STRATEGY_RANDOM = "random";
+    String LOAD_BALANCE_STRATEGY_RANDOM = "Random";
 
     String LOAD_BALANCE_STRATEGY_ROUND_ROBIN = "RoundRobin";
 
