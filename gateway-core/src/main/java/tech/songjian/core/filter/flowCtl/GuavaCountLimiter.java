@@ -1,7 +1,8 @@
 package tech.songjian.core.filter.flowCtl;
 
 import com.google.common.util.concurrent.RateLimiter;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import tech.songjian.common.config.Rule;
 
 import java.util.concurrent.ConcurrentHashMap;
