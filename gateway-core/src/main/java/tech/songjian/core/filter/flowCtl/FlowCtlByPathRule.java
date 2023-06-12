@@ -1,9 +1,9 @@
 package tech.songjian.core.filter.flowCtl;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang.StringUtils;
+import com.alibaba.nacos.common.utils.StringUtils;
 import tech.songjian.common.config.Rule;
-import tech.songjian.core.context.GatewayContext;
+import tech.songjian.core.redis.JedisUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,11 +26,14 @@ public class FlowCtlByPathRule implements IGatewayFlowCtlRule{
 
     private String path;
 
+    private RedisCountLimiter redisCountLimiter;
+
     private static final String LIMIT_MESSAGE = "您的请求过于频繁，请稍后重试！";
 
-    public FlowCtlByPathRule(String serviceId, String path) {
+    public FlowCtlByPathRule(String serviceId, String path, RedisCountLimiter redisCountLimiter) {
         this.serviceId = serviceId;
         this.path = path;
+        this.redisCountLimiter = redisCountLimiter;
     }
 
     private static ConcurrentHashMap<String, FlowCtlByPathRule> servicePathMap = new ConcurrentHashMap<>();
@@ -42,7 +45,8 @@ public class FlowCtlByPathRule implements IGatewayFlowCtlRule{
         // 获取
         FlowCtlByPathRule flowCtlByPathRule = servicePathMap.get(key);
         if (flowCtlByPathRule == null) {
-            flowCtlByPathRule = new FlowCtlByPathRule(serviceId, path);
+            flowCtlByPathRule = new FlowCtlByPathRule(serviceId, path,
+                    new RedisCountLimiter(new JedisUtil()));
             servicePathMap.putIfAbsent(key, flowCtlByPathRule);
         }
         return flowCtlByPathRule;
@@ -66,8 +70,10 @@ public class FlowCtlByPathRule implements IGatewayFlowCtlRule{
         double permits = configMap.get(FLOW_CTL_LIMIT_PERMITS);
         boolean flag = true;
         if (FLOW_CTL_MODEL_DISTRIBUTED.equalsIgnoreCase(flowCtlConfig.getModel())) {
-            // TODO 分布式架构
-            flag = true;
+            // 分布式架构
+            StringBuffer buffer = new StringBuffer();
+            String key = buffer.append(serviceId).append(DIT_SEPARATOR).append(path).toString();
+            flag = redisCountLimiter.doFlowCtl(key, (int) permits, (int) duration);
         } else {
             // 单体架构的限流实现
             GuavaCountLimiter guavaCountLimiter = GuavaCountLimiter.getInstance(serviceId, flowCtlConfig);
