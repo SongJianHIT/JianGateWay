@@ -11,25 +11,14 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.asynchttpclient.Request;
-import org.asynchttpclient.Response;
 import tech.songjian.common.enums.ResponseCode;
 import tech.songjian.common.exception.BaseException;
-import tech.songjian.common.exception.ConnectException;
-import tech.songjian.common.exception.ResponseException;
-import tech.songjian.core.ConfigLoader;
 import tech.songjian.core.context.GatewayContext;
 import tech.songjian.core.filter.FilterFactory;
 import tech.songjian.core.filter.GatewayFilterChainFactory;
-import tech.songjian.core.helper.AsyncHttpHelper;
 import tech.songjian.core.helper.RequestHelper;
 import tech.songjian.core.helper.ResponseHelper;
 import tech.songjian.core.request.HttpRequestWrapper;
-import tech.songjian.core.response.GatewayResponse;
-
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeoutException;
 
 /**
  * NettyCoreProcess
@@ -54,8 +43,6 @@ public class NettyCoreProcessor implements NettyProcessor{
             // 执行过滤器逻辑
             filterFactory.buildFilterChain(gatewayContext).doFilter(gatewayContext);
 
-            // 进行路由
-            route(gatewayContext);
         } catch (BaseException e) {
             // 自定义异常
             log.error("process error {} {}", e.getCode(), e.getMessage());
@@ -82,58 +69,5 @@ public class NettyCoreProcessor implements NettyProcessor{
         ReferenceCountUtil.release(request);
     }
 
-    /**
-     * 路由函数，请求转发
-     * @param gatewayContext
-     */
-    private void route(GatewayContext gatewayContext) {
-        Request request = gatewayContext.getRequest().build();
-        // 发起请求
-        CompletableFuture<Response> future = AsyncHttpHelper.getInstance().executeRequest(request);
-
-        boolean whenComplete = ConfigLoader.getConfig().isWhenComplete();
-        if (whenComplete) {
-            // 单异步模式
-            future.whenComplete((response, throwable) -> {
-                complete(request, response, throwable, gatewayContext);
-            });
-        } else {
-            // 双异步模式
-            future.whenCompleteAsync((response, throwable) -> {
-                complete(request, response, throwable, gatewayContext);
-            });
-        }
-    }
-
-    private void complete(Request request, Response response, Throwable throwable, GatewayContext gatewayContext) {
-        // 释放请求资源
-        gatewayContext.releaseRequest();
-
-        try {
-            // 判断有没有异常
-            if (Objects.nonNull(throwable)) {
-                String url = request.getUrl();
-                if (throwable instanceof TimeoutException) {
-                    log.warn("complete time out {}", url);
-                    gatewayContext.setThrowable(new ResponseException(ResponseCode.REQUEST_TIMEOUT));
-                } else {
-                    gatewayContext.setThrowable(new ConnectException(throwable,
-                            gatewayContext.getUniqueId(),
-                            url, ResponseCode.HTTP_RESPONSE_ERROR));
-                }
-            } else {
-                // 没有异常，正常响应结果
-                gatewayContext.setResponse(GatewayResponse.buildGatewayResponse(response));
-            }
-        } catch (Throwable t) {
-            gatewayContext.setThrowable(new ResponseException(ResponseCode.INTERNAL_ERROR));
-            log.error("complete error", t);
-        } finally {
-            // 改变 context 状态
-            gatewayContext.setWritten();
-            // 写回数据
-            ResponseHelper.writeResponse(gatewayContext);
-        }
-    }
 }
 

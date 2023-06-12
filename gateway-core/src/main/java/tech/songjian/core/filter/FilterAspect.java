@@ -5,6 +5,8 @@
  */
 package tech.songjian.core.filter;
 
+import java.lang.annotation.*;
+
 /**
  * FilterAspect
  * @description 过滤器注解类
@@ -12,6 +14,9 @@ package tech.songjian.core.filter;
  * @date 2023/6/10 17:20
  * @version
  */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
 public @interface FilterAspect {
 
     /**

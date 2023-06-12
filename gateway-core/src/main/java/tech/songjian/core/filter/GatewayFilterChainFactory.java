@@ -9,8 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import tech.songjian.common.config.Rule;
 import tech.songjian.core.context.GatewayContext;
+import tech.songjian.core.filter.router.RouterFilter;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * GatewayFilterChainFactory
@@ -53,7 +55,7 @@ public class GatewayFilterChainFactory implements FilterFactory{
         return SingletonInstance.INSTANCE;
     }
 
-    public Map<String /* filterId */, Filter> processorFilterIdMap = new LinkedHashMap<>();
+    public Map<String /* filterId */, Filter> processorFilterIdMap = new ConcurrentHashMap<>();
 
     @Override
     public GatewayFilterChain buildFilterChain(GatewayContext ctx) throws Exception {
@@ -78,7 +80,8 @@ public class GatewayFilterChainFactory implements FilterFactory{
                 }
             }
         }
-        // TODO 最后一个过滤器：添加路由过滤器
+        // 最后一个过滤器：添加路由过滤器
+        filters.add(new RouterFilter());
         // 排序
         filters.sort(Comparator.comparingInt(Filter::getOrder));
         // 添加到链中

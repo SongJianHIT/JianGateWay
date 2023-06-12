@@ -11,6 +11,7 @@ import tech.songjian.core.context.GatewayContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * GatewayFilterChain
@@ -25,7 +26,7 @@ public class GatewayFilterChain {
     /**
      * 过滤器集合
      */
-    private List<Filter> filters = null;
+    private List<Filter> filterList = new ArrayList<>();
 
     /**
      * 向过滤器链中添加过滤器
@@ -33,7 +34,7 @@ public class GatewayFilterChain {
      * @return
      */
     public GatewayFilterChain addFilter(Filter filter) {
-        filters.add(filter);
+        filterList.add(filter);
         return this;
     }
 
@@ -43,7 +44,7 @@ public class GatewayFilterChain {
      * @return
      */
     public GatewayFilterChain addFilterList (List<Filter> filters) {
-        filters.addAll(filters);
+        filterList.addAll(filters);
         return this;
     }
 
@@ -54,11 +55,11 @@ public class GatewayFilterChain {
      * @throws Throwable
      */
     public GatewayContext doFilter(GatewayContext ctx) {
-        if (filters.isEmpty()) {
+        if (filterList.isEmpty()) {
             return ctx;
         }
         try {
-            for (Filter filter : filters) {
+            for (Filter filter : filterList) {
                 filter.doFilter(ctx);
             }
         } catch (Exception e) {

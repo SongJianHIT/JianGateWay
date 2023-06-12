@@ -10,9 +10,13 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import tech.songjian.common.config.Rule;
+import tech.songjian.common.config.ServiceInstance;
+import tech.songjian.common.enums.ResponseCode;
+import tech.songjian.common.exception.NotFoundException;
 import tech.songjian.core.context.GatewayContext;
 import tech.songjian.core.filter.Filter;
 import tech.songjian.core.filter.FilterAspect;
+import tech.songjian.core.request.GatewayRequest;
 import tech.songjian.core.request.IGatewayRequest;
 
 import java.util.Iterator;
@@ -20,7 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static tech.songjian.common.constants.LoadBalanceFilterConst.*;
+import static tech.songjian.common.constants.BasicConst.COLON_SEPARATOR;
+import static tech.songjian.common.constants.FilterConst.*;
 
 /**
  * LoadBalanceFilter
@@ -32,10 +37,21 @@ import static tech.songjian.common.constants.LoadBalanceFilterConst.*;
 @Slf4j
 @FilterAspect(id = LOAD_BALANCE_FILTER_ID, name = LOAD_BALANCE_FILTER_NAME, order = LOAD_BALANCE_FILTER_ORDER)
 public class LoadBalanceFilter implements Filter {
+
     @Override
     public void doFilter(GatewayContext ctx) throws Exception {
         String serviceId = ctx.getUniqueId();
         IGatewayLoadBalanceRule gatewayLoadBalanceRule = getLoadBalanceRule(ctx);
+        // 根据负载均衡算法选择一个服务实例
+        ServiceInstance serviceInstance = gatewayLoadBalanceRule.choose(serviceId);
+        GatewayRequest request = ctx.getRequest();
+        if (serviceId != null && request != null) {
+            String host = serviceInstance.getIp() + COLON_SEPARATOR + serviceInstance.getPort();
+            request.setModifyHost(host);
+        } else {
+            log.warn("No instance available for : {}", serviceId);
+            throw new NotFoundException(ResponseCode.SERVICE_DEFINITION_NOT_FOUND);
+        }
     }
 
     /**

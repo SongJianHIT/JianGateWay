@@ -102,6 +102,7 @@ public class Bootstrap {
                         JSON.toJSON(serviceInstanceSet));
                 DynamicConfigManager manager = DynamicConfigManager.getInstance();
                 manager.addServiceInstance(serviceDefinition.getUniqueId(), serviceInstanceSet);
+                manager.putServiceDefinition(serviceDefinition.getUniqueId(), serviceDefinition);
             }
         });
         return registerCenter;
