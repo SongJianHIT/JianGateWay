@@ -50,6 +50,15 @@ public class Rule implements Comparable<Rule>, Serializable {
      */
     private List<String> paths;
 
+    private Set<FilterConfig> filterConfigs =new HashSet<>();
+
+    private RetryConfig retryConfig = new RetryConfig();
+
+    /**
+     * 限流规则配置
+     */
+    private Set<FlowCtlConfig> flowCtlConfigs =new HashSet<>();
+
     public String getServiceId() {
         return serviceId;
     }
@@ -73,8 +82,6 @@ public class Rule implements Comparable<Rule>, Serializable {
     public void setPaths(List<String> paths) {
         this.paths = paths;
     }
-
-    private Set<FilterConfig> filterConfigs =new HashSet<>();
 
     public String getId() {
         return id;
@@ -116,7 +123,13 @@ public class Rule implements Comparable<Rule>, Serializable {
         this.filterConfigs = filterConfigs;
     }
 
-    private RetryConfig retryConfig = new RetryConfig();
+    public Set<FlowCtlConfig> getFlowCtlConfigs() {
+        return flowCtlConfigs;
+    }
+
+    public void setFlowCtlConfigs(Set<FlowCtlConfig> flowCtlConfigs) {
+        this.flowCtlConfigs = flowCtlConfigs;
+    }
 
     public Rule(){
         super();
@@ -136,7 +149,7 @@ public class Rule implements Comparable<Rule>, Serializable {
     }
 
     /**
-     * 过滤器配置内部类
+     * --------------------------------------  过滤器配置内部类  -----------------
      */
     public static class FilterConfig {
 
@@ -249,7 +262,7 @@ public class Rule implements Comparable<Rule>, Serializable {
     }
 
     /**
-     * 重试机制内部类
+     * --------------------------------------  重试机制内部类  -----------------
      */
     public static class RetryConfig {
         /**
@@ -272,5 +285,62 @@ public class Rule implements Comparable<Rule>, Serializable {
 
     public void setRetryConfig(RetryConfig retryConfig) {
         this.retryConfig = retryConfig;
+    }
+
+    /**
+     * --------------------------------------  限流流控配置内部类  -----------------
+     */
+    public static class FlowCtlConfig {
+        /**
+         * 限流类型：可对 path，ip 或服务
+         */
+        private String type;
+
+        /**
+         * 限流对象的值
+         */
+        private String value;
+
+        /**
+         * 限流模式：单机 or 分布式
+         */
+        private String model;
+
+        /**
+         * 限流规则
+         */
+        private String config;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public String getModel() {
+            return model;
+        }
+
+        public void setModel(String model) {
+            this.model = model;
+        }
+
+        public String getConfig() {
+            return config;
+        }
+
+        public void setConfig(String config) {
+            this.config = config;
+        }
     }
 }
