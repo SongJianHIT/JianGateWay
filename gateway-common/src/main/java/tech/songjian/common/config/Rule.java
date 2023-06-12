@@ -1,5 +1,6 @@
 package tech.songjian.common.config;
 
+import java.io.PipedReader;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
@@ -115,6 +116,8 @@ public class Rule implements Comparable<Rule>, Serializable {
         this.filterConfigs = filterConfigs;
     }
 
+    private RetryConfig retryConfig = new RetryConfig();
+
     public Rule(){
         super();
     }
@@ -132,7 +135,10 @@ public class Rule implements Comparable<Rule>, Serializable {
         this.filterConfigs = filterConfigs;
     }
 
-    public static class FilterConfig{
+    /**
+     * 过滤器配置内部类
+     */
+    public static class FilterConfig {
 
         /**
          * 过滤器唯一ID
@@ -240,5 +246,31 @@ public class Rule implements Comparable<Rule>, Serializable {
     @Override
     public  int hashCode(){
         return Objects.hash(id);
+    }
+
+    /**
+     * 重试机制内部类
+     */
+    public static class RetryConfig {
+        /**
+         * 重试次数
+         */
+        private int times;
+
+        public int getTimes() {
+            return times;
+        }
+
+        public void setTimes(int times) {
+            this.times = times;
+        }
+    }
+
+    public RetryConfig getRetryConfig() {
+        return retryConfig;
+    }
+
+    public void setRetryConfig(RetryConfig retryConfig) {
+        this.retryConfig = retryConfig;
     }
 }

@@ -54,7 +54,7 @@ public class RequestHelper {
 				ctx,
 				HttpUtil.isKeepAlive(request),
 				gateWayRequest,
-				rule);
+				rule, 0);
 
 		// 后续服务发现做完，这里都要改成动态的——已经在负载均衡算法中实现
 		// gatewayContext.getRequest().setModifyHost("127.0.0.1:8080");

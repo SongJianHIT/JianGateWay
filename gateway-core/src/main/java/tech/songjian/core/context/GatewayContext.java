@@ -39,11 +39,17 @@ public class GatewayContext extends BasicContext{
      */
     public Rule rule;
 
+    /**
+     * 当前重试次数
+     */
+    private int currentRetryTimes;
+
     public GatewayContext(String protocol, ChannelHandlerContext nettyCtx,
-                          boolean keepAlive, GatewayRequest request, Rule rule) {
+                          boolean keepAlive, GatewayRequest request, Rule rule, int currentRetryTimes) {
         super(protocol, nettyCtx, keepAlive);
         this.request = request;
         this.rule = rule;
+        this.currentRetryTimes = currentRetryTimes;
     }
 
     /**
@@ -90,21 +96,9 @@ public class GatewayContext extends BasicContext{
             AssertUtil.notNull (rule, "rule 不能为空！");
             AssertUtil.notNull (request, "request 不能为空！");
             // AssertUtil.notNull (keepAlive, "setKeepAlive 不能为空！");
-            return new GatewayContext(protocol, nettyCtx, keepAlive, request, rule);
+            return new GatewayContext(protocol, nettyCtx, keepAlive, request, rule, 0);
         }
     }
-
-    /**
-     * 获取必要上下文参数
-     * @param key
-     * @return
-     * @param <T>
-     */
-//    public <T> T getRequireAttribute (String key) {
-//        T value = getAttribute(key);
-//        AssertUtil.notNull (value, "缺乏必要参数！");
-//        return value;
-//    }
 
     /**
      * 获取指定 key 的上下文参数，如果没有，则返回默认值
@@ -176,6 +170,14 @@ public class GatewayContext extends BasicContext{
 
     public void setRule(Rule rule) {
         this.rule = rule;
+    }
+
+    public int getCurrentRetryTimes() {
+        return currentRetryTimes;
+    }
+
+    public void setCurrentRetryTimes(int currentRetryTimes) {
+        this.currentRetryTimes = currentRetryTimes;
     }
 }
 

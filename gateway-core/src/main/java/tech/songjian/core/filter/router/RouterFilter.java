@@ -3,6 +3,7 @@ package tech.songjian.core.filter.router;
 import lombok.extern.slf4j.Slf4j;
 import org.asynchttpclient.Request;
 import org.asynchttpclient.Response;
+import tech.songjian.common.config.Rule;
 import tech.songjian.common.enums.ResponseCode;
 import tech.songjian.common.exception.ConnectException;
 import tech.songjian.common.exception.ResponseException;
@@ -14,6 +15,7 @@ import tech.songjian.core.helper.AsyncHttpHelper;
 import tech.songjian.core.helper.ResponseHelper;
 import tech.songjian.core.response.GatewayResponse;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
@@ -63,6 +65,19 @@ public class RouterFilter implements Filter {
         // 释放请求资源
         gatewayContext.releaseRequest();
 
+        Rule rule = gatewayContext.getRule();
+        // 当前重试次数
+        int currentRetryTimes = gatewayContext.getCurrentRetryTimes();
+        // 配置的重试次数
+        int confRetryTimes = rule.getRetryConfig().getTimes();
+        // 重试条件
+        if ((throwable instanceof TimeoutException
+                || throwable instanceof IOException)
+                && currentRetryTimes <= confRetryTimes) {
+            dpRetry(gatewayContext, currentRetryTimes);
+            return;
+        }
+
         try {
             // 判断有没有异常
             if (Objects.nonNull(throwable)) {
@@ -87,6 +102,22 @@ public class RouterFilter implements Filter {
             gatewayContext.setWritten();
             // 写回数据
             ResponseHelper.writeResponse(gatewayContext);
+        }
+    }
+
+    /**
+     * 重试
+     * @param gatewayContext
+     * @param currentRetryTimes
+     */
+    private void dpRetry(GatewayContext gatewayContext, int currentRetryTimes) {
+        // 重试次数 + 1
+        System.out.println("当前重试次数为：" + currentRetryTimes);
+        gatewayContext.setCurrentRetryTimes(currentRetryTimes + 1);
+        try {
+            doFilter(gatewayContext);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
