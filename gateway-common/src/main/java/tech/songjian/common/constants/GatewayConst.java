@@ -11,4 +11,10 @@ public interface GatewayConst {
 	int DEFAULT_WEIGHT = 100;
 
 	String META_DATA_KEY = "meta";
+
+	/**
+	 * 缓冲队列类型
+	 */
+	String BUFFER_TYPE_PARALLEL = "parallel";
+
 }

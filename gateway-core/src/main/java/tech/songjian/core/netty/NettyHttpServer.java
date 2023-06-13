@@ -70,6 +70,7 @@ public class NettyHttpServer implements LifeCycle {
     @Override
     public void init() {
         this.serverBootstrap = new ServerBootstrap();
+        log.info("使用 netty worker 线程数为：{}", config.getEventLoopGroupWorkerNum());
         if (useEpoll()) {
             this.bossEventLoopGroup = new EpollEventLoopGroup(
                     config.getEventLoopGroupBossNum(),

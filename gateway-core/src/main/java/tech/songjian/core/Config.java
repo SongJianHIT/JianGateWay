@@ -50,6 +50,7 @@ public class Config {
      * netty 的 workerGroup 数量
      */
     private int eventLoopGroupWorkerNum = Runtime.getRuntime().availableProcessors();
+    //private int eventLoopGroupWorkerNum = 1;
 
     /**
      * 最大报文长度
@@ -92,5 +93,7 @@ public class Config {
      * 客户端空闲连接超时时间, 默认60秒
      */
     private int httpPooledConnectionIdleTimeout = 60 * 1000;
+
+    private String bufferType = "parallel";
 }
 

@@ -11,6 +11,8 @@ import tech.songjian.core.netty.NettyHttpServer;
 import tech.songjian.core.netty.processor.NettyCoreProcessor;
 import tech.songjian.core.netty.processor.NettyProcessor;
 
+import static tech.songjian.common.constants.GatewayConst.BUFFER_TYPE_PARALLEL;
+
 /**
  * Container
  * @description 核心容器，用于整合Netty相关组件
@@ -39,7 +41,14 @@ public class Container implements LifeCycle {
 
     @Override
     public void init() {
-        this.nettyProcessor = new NettyCoreProcessor();
+        NettyCoreProcessor nettyCoreProcessor = new NettyCoreProcessor();
+        if (BUFFER_TYPE_PARALLEL.equals(config.getBufferType())) {
+            this.nettyProcessor =
+        } else {
+            this.nettyProcessor = nettyCoreProcessor;
+        }
+
+
         this.nettyHttpServer = new NettyHttpServer(config, nettyProcessor);
         this.nettyHttpClient = new NettyHttpClient(config, nettyHttpServer.getWorkerEventLoopGroup());
     }
