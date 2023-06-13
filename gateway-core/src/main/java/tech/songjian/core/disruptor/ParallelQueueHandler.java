@@ -48,13 +48,14 @@ public class ParallelQueueHandler<E> implements ParallelQueue<E> {
         }
 
         // 构建多个消费者线程池
-        WorkerPool<Holder> workerPool1 = new WorkerPool<Holder>(ringBuffer,
+        WorkerPool<Holder> workerPool = new WorkerPool<Holder>(ringBuffer,
                 sequenceBarrier,
                 new HolderExceptionHandler(),
                 workHandlers);
 
-        // 设置多消费者的sequence序号，主要用于统计消费进度
+        //设置多消费者的Sequence序号，主要用于统计消费进度，
         ringBuffer.addGatingSequences(workerPool.getWorkerSequences());
+        this.workerPool = workerPool;
     }
 
     @Override
@@ -175,7 +176,7 @@ public class ParallelQueueHandler<E> implements ParallelQueue<E> {
         }
 
         public Builder<E> setThreads(int threads) {
-            Preconditions.checkArgument(Integer.bitCount(threads) == 1);
+            Preconditions.checkArgument(Integer.bitCount(threads) >= 1);
             this.threads = threads;
             return this;
         }

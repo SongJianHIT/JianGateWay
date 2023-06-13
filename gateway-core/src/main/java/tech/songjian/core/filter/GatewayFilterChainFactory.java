@@ -5,6 +5,8 @@
  */
 package tech.songjian.core.filter;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import tech.songjian.common.config.Rule;
@@ -14,6 +16,7 @@ import tech.songjian.core.filter.router.RouterFilter;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * GatewayFilterChainFactory
@@ -56,10 +59,17 @@ public class GatewayFilterChainFactory implements FilterFactory{
         return SingletonInstance.INSTANCE;
     }
 
+    private Cache<String, GatewayFilterChain> chainCache =
+            Caffeine.newBuilder().recordStats().expireAfterWrite(10, TimeUnit.MINUTES).build();
+
     public Map<String /* filterId */, Filter> processorFilterIdMap = new ConcurrentHashMap<>();
 
     @Override
     public GatewayFilterChain buildFilterChain(GatewayContext ctx) throws Exception {
+        return chainCache.get(ctx.getRule().getId(), k -> doBuildFilterChain(ctx.getRule()));
+    }
+
+    public GatewayFilterChain doBuildFilterChain(Rule rule) {
         GatewayFilterChain chain = new GatewayFilterChain();
         ArrayList<Filter> filters = new ArrayList<>();
         // 添加灰度发布过滤器
@@ -67,8 +77,6 @@ public class GatewayFilterChainFactory implements FilterFactory{
         // 添加监控过滤器
         filters.add(getFilterInfo(FilterConst.MONITOR_FILTER_ID));
         filters.add(getFilterInfo(FilterConst.MONITOR_END_FILTER_ID));
-        // 通过规则 rule 构建
-        Rule rule = ctx.getRule();
         if (rule != null) {
             Set<Rule.FilterConfig> filterConfigs = rule.getFilterConfigs();
             Iterator iterator = filterConfigs.iterator();
@@ -87,7 +95,7 @@ public class GatewayFilterChainFactory implements FilterFactory{
             }
         }
         // 最后一个过滤器：添加路由过滤器
-        filters.add(new RouterFilter());
+        filters.add(getFilterInfo(FilterConst.ROUTER_FILTER_ID));
         // 排序
         filters.sort(Comparator.comparingInt(Filter::getOrder));
         // 添加到链中
@@ -96,7 +104,7 @@ public class GatewayFilterChainFactory implements FilterFactory{
     }
 
     @Override
-    public Filter getFilterInfo(String filterId) throws Exception {
+    public Filter getFilterInfo(String filterId) {
         return processorFilterIdMap.get(filterId);
     }
 }
