@@ -3,3 +3,5 @@ tech.songjian.core.filter.router.RouterFilter
 tech.songjian.core.filter.flowCtl.FlowCtlFilter
 tech.songjian.core.filter.user.UserAuthFilter
 tech.songjian.core.filter.gray.GrayFilter
+tech.songjian.core.filter.monitor.MonitorEndFilter
+tech.songjian.core.filter.monitor.MonitorFilter

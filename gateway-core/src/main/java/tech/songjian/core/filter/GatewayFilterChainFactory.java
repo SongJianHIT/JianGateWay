@@ -64,6 +64,9 @@ public class GatewayFilterChainFactory implements FilterFactory{
         ArrayList<Filter> filters = new ArrayList<>();
         // 添加灰度发布过滤器
         filters.add(getFilterInfo(FilterConst.GRAY_FILTER_ID));
+        // 添加监控过滤器
+        filters.add(getFilterInfo(FilterConst.MONITOR_FILTER_ID));
+        filters.add(getFilterInfo(FilterConst.MONITOR_END_FILTER_ID));
         // 通过规则 rule 构建
         Rule rule = ctx.getRule();
         if (rule != null) {

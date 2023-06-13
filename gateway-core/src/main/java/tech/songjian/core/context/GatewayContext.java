@@ -5,6 +5,7 @@
  */
 package tech.songjian.core.context;
 
+import io.micrometer.core.instrument.Timer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.ReferenceCountUtil;
@@ -51,6 +52,10 @@ public class GatewayContext extends BasicContext{
     @Setter
     @Getter
     private boolean gray;
+
+    @Setter
+    @Getter
+    private Timer.Sample timerSample;
 
     public GatewayContext(String protocol, ChannelHandlerContext nettyCtx,
                           boolean keepAlive, GatewayRequest request, Rule rule, int currentRetryTimes) {

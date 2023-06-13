@@ -22,6 +22,11 @@ public class Config {
     private int port = 8888;
 
     /**
+     * 普罗帕米修斯端口
+     */
+    private int prometheusPort = 18000;
+
+    /**
      * 应用名
      */
     private String applicationName = "api-gateway";
