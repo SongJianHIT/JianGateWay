@@ -13,6 +13,7 @@ import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import lombok.Getter;
 
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.asynchttpclient.Request;
 import org.asynchttpclient.RequestBuilder;
@@ -114,6 +115,13 @@ public class GatewayRequest implements IGatewayRequest{
      * 请求体
      */
     private String body;
+
+    /**
+     * JWT 解析出的用户 id
+     */
+    @Getter
+    @Setter
+    private long userId;
 
     /**
      * 一个请求可能分发到多个服务中去，可能存在多个cookie
@@ -317,13 +325,17 @@ public class GatewayRequest implements IGatewayRequest{
         return modifyScheme + modifyHost + modifyPath;
     }
 
+
+
     /**
+     * 转发之前执行的
      * 构造请求
      * @return
      */
     @Override
     public Request build() {
         requestBuilder.setUrl(getFinalURL());
+        requestBuilder.setHeader("userId", String.valueOf(userId));
         return requestBuilder.build();
     }
 }

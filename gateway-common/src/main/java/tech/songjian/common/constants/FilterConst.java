@@ -38,6 +38,15 @@ public interface FilterConst {
     int ROUTER_FILTER_ORDER = Integer.MAX_VALUE;
 
     /**
+     * ---------------- 用户鉴权过滤器 --------------------------
+     */
+    String USER_AUTH_FILTER_ID = "user_auth_filter";
+
+    String USER_AUTH_FILTER_NAME = "user_auth_filter";
+
+    int USER_AUTH_FILTER_ORDER = 1;
+
+    /**
      * ---------------- 限流过滤器 --------------------------
      */
     String FLOW_CTL_FILTER_ID = "flow_ctl_filter";

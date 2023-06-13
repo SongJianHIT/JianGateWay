@@ -1,3 +1,4 @@
 tech.songjian.core.filter.loadbalance.LoadBalanceFilter
 tech.songjian.core.filter.router.RouterFilter
 tech.songjian.core.filter.flowCtl.FlowCtlFilter
+tech.songjian.core.filter.user.UserAuthFilter
