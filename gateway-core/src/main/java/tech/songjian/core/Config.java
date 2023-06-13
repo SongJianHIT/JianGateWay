@@ -5,6 +5,7 @@
  */
 package tech.songjian.core;
 
+import com.lmax.disruptor.*;
 import lombok.Data;
 
 /**
@@ -94,6 +95,34 @@ public class Config {
      */
     private int httpPooledConnectionIdleTimeout = 60 * 1000;
 
+    /**
+     * =============== disruptor 相关
+     */
     private String bufferType = "parallel";
+
+    private int bufferSize = 1024 * 16;
+
+    private int processThread = Runtime.getRuntime().availableProcessors();
+
+    private String waitStrategy = "blocking";
+
+    /**
+     * disruptor 的等待策略
+     * @return
+     */
+    public WaitStrategy getWaitStrategy () {
+        switch (waitStrategy) {
+            case "blocking":
+                return new BlockingWaitStrategy();
+            case "busySpin":
+                return new BusySpinWaitStrategy();
+            case "yielding":
+                return new YieldingWaitStrategy();
+            case "sleeping":
+                return new SleepingWaitStrategy();
+            default:
+                return new BlockingWaitStrategy();
+        }
+    }
 }
 
