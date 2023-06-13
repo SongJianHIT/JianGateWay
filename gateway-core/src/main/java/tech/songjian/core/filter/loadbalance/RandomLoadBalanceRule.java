@@ -52,12 +52,13 @@ public class RandomLoadBalanceRule implements IGatewayLoadBalanceRule{
     @Override
     public ServiceInstance choose(GatewayContext context) {
         String serviceId = context.getUniqueId();
-        return choose(serviceId);
+        return choose(serviceId, context.isGray());
     }
 
     @Override
-    public ServiceInstance choose(String serviceId) {
-        Set<ServiceInstance> serviceInstanceSet = DynamicConfigManager.getInstance().getServiceInstanceByUniqueId(serviceId);
+    public ServiceInstance choose(String serviceId, boolean gray) {
+        Set<ServiceInstance> serviceInstanceSet =
+                DynamicConfigManager.getInstance().getServiceInstanceByUniqueId(serviceId, gray);
         if (serviceInstanceSet.isEmpty()) {
             log.warn("No instance available for: {}", serviceId);
             throw new NotFoundException(ResponseCode.SERVICE_INSTANCE_NOT_FOUND);

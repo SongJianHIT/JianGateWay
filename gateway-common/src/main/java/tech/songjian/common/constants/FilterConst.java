@@ -47,6 +47,15 @@ public interface FilterConst {
     int USER_AUTH_FILTER_ORDER = 1;
 
     /**
+     * ---------------- 灰度流量过滤器 --------------------------
+     */
+    String GRAY_FILTER_ID = "gray_filter";
+
+    String GRAY_FILTER_NAME = "gray_filter";
+
+    int GRAY_FILTER_ORDER = 0;
+
+    /**
      * ---------------- 限流过滤器 --------------------------
      */
     String FLOW_CTL_FILTER_ID = "flow_ctl_filter";

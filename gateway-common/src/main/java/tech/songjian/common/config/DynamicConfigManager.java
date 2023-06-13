@@ -1,6 +1,7 @@
 package tech.songjian.common.config;
 
 import org.checkerframework.checker.units.qual.A;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -72,8 +73,20 @@ public class DynamicConfigManager {
 
 	/***************** 	对服务实例缓存进行操作的系列方法 	***************/
 
-	public Set<ServiceInstance> getServiceInstanceByUniqueId(String uniqueId){
-		return serviceInstanceMap.get(uniqueId);
+	public Set<ServiceInstance> getServiceInstanceByUniqueId(String uniqueId, boolean gray){
+		Set<ServiceInstance> serviceInstances = serviceInstanceMap.get(uniqueId);
+		if (CollectionUtils.isEmpty(serviceInstances)) {
+			// 如果为空，直接返回
+			return Collections.emptySet();
+		}
+		// 如果是灰度，则要过滤出灰度服务
+		if (gray) {
+			return serviceInstances.stream()
+					.filter(ServiceInstance::isGray)
+					.collect(Collectors.toSet());
+		}
+		// 否则，正常返回
+		return serviceInstances;
 	}
 
 	public void addServiceInstance(String uniqueId, ServiceInstance serviceInstance) {

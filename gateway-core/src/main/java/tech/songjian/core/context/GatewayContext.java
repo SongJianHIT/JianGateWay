@@ -8,6 +8,7 @@ package tech.songjian.core.context;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.ReferenceCountUtil;
+import lombok.Getter;
 import lombok.Setter;
 import tech.songjian.common.config.Rule;
 import tech.songjian.common.utils.AssertUtil;
@@ -43,6 +44,13 @@ public class GatewayContext extends BasicContext{
      * 当前重试次数
      */
     private int currentRetryTimes;
+
+    /**
+     * 灰度标识
+     */
+    @Setter
+    @Getter
+    private boolean gray;
 
     public GatewayContext(String protocol, ChannelHandlerContext nettyCtx,
                           boolean keepAlive, GatewayRequest request, Rule rule, int currentRetryTimes) {

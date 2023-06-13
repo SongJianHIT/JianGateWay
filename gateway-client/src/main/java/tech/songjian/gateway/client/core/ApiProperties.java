@@ -29,5 +29,10 @@ public class ApiProperties {
      * 当前环境
      */
     private String env = "dev";
+
+    /**
+     * 是否是灰度服务
+     */
+    private boolean gray = false;
 }
 

@@ -1,5 +1,8 @@
 package tech.songjian.common.config;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -51,6 +54,13 @@ public class ServiceInstance implements Serializable {
 	 * 	服务实例对应的版本号
 	 */
 	protected String version;
+
+	/**
+	 * 标识是否是灰度服务
+	 */
+	@Getter
+	@Setter
+	private boolean gray;
 
 	public ServiceInstance() {
 		super();

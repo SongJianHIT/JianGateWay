@@ -43,7 +43,7 @@ public class LoadBalanceFilter implements Filter {
         String serviceId = ctx.getUniqueId();
         IGatewayLoadBalanceRule gatewayLoadBalanceRule = getLoadBalanceRule(ctx);
         // 根据负载均衡算法选择一个服务实例
-        ServiceInstance serviceInstance = gatewayLoadBalanceRule.choose(serviceId);
+        ServiceInstance serviceInstance = gatewayLoadBalanceRule.choose(serviceId, ctx.isGray());
         GatewayRequest request = ctx.getRequest();
         if (serviceId != null && request != null) {
             String host = serviceInstance.getIp() + COLON_SEPARATOR + serviceInstance.getPort();

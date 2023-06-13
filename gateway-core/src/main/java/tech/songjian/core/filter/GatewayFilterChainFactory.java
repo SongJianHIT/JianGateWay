@@ -8,6 +8,7 @@ package tech.songjian.core.filter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import tech.songjian.common.config.Rule;
+import tech.songjian.common.constants.FilterConst;
 import tech.songjian.core.context.GatewayContext;
 import tech.songjian.core.filter.router.RouterFilter;
 
@@ -61,6 +62,8 @@ public class GatewayFilterChainFactory implements FilterFactory{
     public GatewayFilterChain buildFilterChain(GatewayContext ctx) throws Exception {
         GatewayFilterChain chain = new GatewayFilterChain();
         ArrayList<Filter> filters = new ArrayList<>();
+        // 添加灰度发布过滤器
+        filters.add(getFilterInfo(FilterConst.GRAY_FILTER_ID));
         // 通过规则 rule 构建
         Rule rule = ctx.getRule();
         if (rule != null) {

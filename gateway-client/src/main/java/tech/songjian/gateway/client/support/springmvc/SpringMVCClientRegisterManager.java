@@ -112,6 +112,11 @@ public class SpringMVCClientRegisterManager
                 serviceInstance.setRegisterTime(TimeUtil.currentTimeMillis());
                 serviceInstance.setWeight(DEFAULT_WEIGHT);
 
+                if (getApiProperties().isGray()) {
+                    // 如果是灰度服务
+                    serviceInstance.setGray(true);
+                }
+
                 // 注册
                 register(serviceDefinition, serviceInstance);
             }
