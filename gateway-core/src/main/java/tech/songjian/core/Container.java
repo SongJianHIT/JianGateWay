@@ -8,6 +8,7 @@ package tech.songjian.core;
 import lombok.extern.slf4j.Slf4j;
 import tech.songjian.core.netty.NettyHttpClient;
 import tech.songjian.core.netty.NettyHttpServer;
+import tech.songjian.core.netty.processor.DisruptorNettyCoreProcessor;
 import tech.songjian.core.netty.processor.NettyCoreProcessor;
 import tech.songjian.core.netty.processor.NettyProcessor;
 
@@ -43,7 +44,7 @@ public class Container implements LifeCycle {
     public void init() {
         NettyCoreProcessor nettyCoreProcessor = new NettyCoreProcessor();
         if (BUFFER_TYPE_PARALLEL.equals(config.getBufferType())) {
-            this.nettyProcessor =
+            this.nettyProcessor = new DisruptorNettyCoreProcessor(config, nettyCoreProcessor);
         } else {
             this.nettyProcessor = nettyCoreProcessor;
         }
@@ -55,6 +56,7 @@ public class Container implements LifeCycle {
 
     @Override
     public void start() {
+        nettyProcessor.start();
         nettyHttpServer.start();
         nettyHttpClient.start();
         log.info("api gateway started!");
@@ -62,6 +64,7 @@ public class Container implements LifeCycle {
 
     @Override
     public void shutdown() {
+        nettyProcessor.shutdown();
         nettyHttpServer.shutdown();
         nettyHttpClient.shutdown();
         log.info("api gateway shutdown!");

@@ -21,5 +21,15 @@ public interface NettyProcessor {
      * @param httpRequestWrapper
      */
     void process(HttpRequestWrapper httpRequestWrapper);
+
+    /**
+     * 启动
+     */
+    void start();
+
+    /**
+     * 销毁
+     */
+    void shutdown();
 }
 
