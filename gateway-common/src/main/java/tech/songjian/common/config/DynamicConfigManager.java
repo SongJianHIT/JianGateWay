@@ -1,7 +1,8 @@
 package tech.songjian.common.config;
 
-import org.checkerframework.checker.units.qual.A;
-import org.springframework.util.CollectionUtils;
+
+
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

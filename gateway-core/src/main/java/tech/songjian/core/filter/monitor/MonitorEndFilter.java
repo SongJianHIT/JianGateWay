@@ -1,5 +1,6 @@
 package tech.songjian.core.filter.monitor;
 
+import com.alibaba.nacos.client.naming.utils.RandomUtils;
 import com.sun.net.httpserver.HttpServer;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.prometheus.PrometheusConfig;
@@ -14,6 +15,8 @@ import tech.songjian.core.filter.FilterAspect;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static tech.songjian.common.constants.FilterConst.*;
 
@@ -55,6 +58,21 @@ public class MonitorEndFilter implements Filter {
             throw new RuntimeException(e);
         }
         log.info("prometheus 启动成功！");
+
+        // mock
+        Executors.newScheduledThreadPool(1000).scheduleAtFixedRate(() -> {
+            Timer.Sample sample = Timer.start();
+            try {
+                Thread.sleep(RandomUtils.nextInt(100));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            Timer timer = prometheusMeterRegistry.timer("gateway_request",
+                    "uniqueId", "backend-http-server:1.0.0",
+                    "protocol", "http",
+                    "path", "/http-server/ping" + RandomUtils.nextInt(10));
+            sample.stop(timer);
+        },200, 100, TimeUnit.MILLISECONDS);
     }
 
     @Override

@@ -1,0 +1,449 @@
+2023-06-13 15:45:50.490  INFO [                main]            t.s.g.c.c.n.NacosConfigCenter : config from nacos: {
+    "rules": [
+        {
+            "id":"user-private",
+            "name":"user-private",
+            "protocol":"http",
+            "serviceId":"backend-http-server",
+            "prefix":"/user/private",
+            "paths": [
+            ],
+            "filterConfigs":[
+                {
+                    "id":"load_balancer_filter",
+                    "config":{
+                        "load_balancer": "Random"
+                    }
+                }, 
+                {
+                    "id": "user_auth_filter"
+                }
+            ]
+        }, 
+        {
+            "id":"user",
+            "name":"user",
+            "protocol":"http",
+            "serviceId":"backend-user-server",
+            "prefix":"/user",
+            "paths": [
+            ],
+            "filterConfigs":[
+                {
+                    "id":"load_balancer_filter",
+                    "config": {
+                        "load_balancer": "Random"
+                    }
+                }
+            ]
+        }
+    ]
+}
+2023-06-13 15:45:50.564  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.loadbalance.LoadBalanceFilter,load_balancer_filter,load_balancer_filter,100
+2023-06-13 15:45:50.567  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.router.RouterFilter,router_filter,router_filter,2147483646
+2023-06-13 15:45:50.568  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.flowCtl.FlowCtlFilter,flow_ctl_filter,flow_ctl_filter,50
+2023-06-13 15:45:50.569  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.user.UserAuthFilter,user_auth_filter,user_auth_filter,1
+2023-06-13 15:45:50.570  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.gray.GrayFilter,gray_filter,gray_filter,0
+2023-06-13 15:45:50.626  INFO [                main]               t.s.c.f.m.MonitorEndFilter : prometheus 启动成功！
+2023-06-13 15:45:50.627  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.monitor.MonitorEndFilter,monitor_end_filter,monitor_end_filter,2147483647
+2023-06-13 15:45:50.629  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.monitor.MonitorFilter,monitor_filter,monitor_filter,-1
+2023-06-13 15:45:51.002  INFO [                main]                  t.s.c.n.NettyHttpServer : server startup on port 9999
+2023-06-13 15:45:51.002  INFO [                main]                          t.s.c.Container : api gateway started!
+2023-06-13 15:45:51.159  INFO [                main]          t.s.g.r.c.n.NacosRegisterCenter : register tech.songjian.common.config.ServiceDefinition@5229e9b0 tech.songjian.common.config.ServiceInstance@65ed32b7
+2023-06-13 15:45:51.171  INFO [                main]          t.s.g.r.c.n.NacosRegisterCenter : service list size 1
+2023-06-13 15:45:51.206  INFO [                main]                          t.s.c.Bootstrap : refresh service and instance: api-gateway [{address=null, gray=false, port=9999, registerTime=1686642351115, enable=true, ip=10.250.117.83, serviceInstanceId=10.250.117.83:9999, weight=null, version=null, uniqueId=null, tags=null}]
+2023-06-13 15:45:51.206  INFO [                main]          t.s.g.r.c.n.NacosRegisterCenter : subscribe api-gateway dev
+2023-06-13 15:45:52.023  INFO [InstancesChangeEvent]                          t.s.c.Bootstrap : refresh service and instance: api-gateway [{address=null, gray=false, port=9999, registerTime=1686642351115, enable=true, ip=10.250.117.83, serviceInstanceId=10.250.117.83:9999, weight=null, version=null, uniqueId=null, tags=null}]
+2023-06-13 15:46:01.210  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 1
+2023-06-13 15:46:11.227  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 1
+2023-06-13 15:46:21.230  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 1
+2023-06-13 15:46:31.236  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:46:31.242  INFO [bscribeAllServices.0]                          t.s.c.Bootstrap : refresh service and instance: backend-http-server:1.0.0 [{address=backend-http-server:1.0.0, gray=false, port=8083, registerTime=1686642391014, enable=true, ip=10.250.117.83, serviceInstanceId=10.250.117.83:8083, weight=100, version=1.0.0, uniqueId=backend-http-server:1.0.0, tags=null}]
+2023-06-13 15:46:31.242  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : subscribe backend-http-server dev
+2023-06-13 15:46:41.244  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:46:51.247  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:47:01.249  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:47:06.502 ERROR [netty-worker-nio-3-1]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: Cannot invoke "Object.hashCode()" because "key" is null
+	at java.util.concurrent.ConcurrentHashMap.get(ConcurrentHashMap.java:936) ~[?:?]
+	at tech.songjian.common.config.DynamicConfigManager.getServiceDefinition(DynamicConfigManager.java:64) ~[classes/:?]
+	at tech.songjian.core.helper.RequestHelper.doContext(RequestHelper.java:40) ~[classes/:?]
+	at tech.songjian.core.netty.processor.NettyCoreProcessor.process(NettyCoreProcessor.java:42) [classes/:?]
+	at tech.songjian.core.netty.NettyHttpServerHandler.channelRead(NettyHttpServerHandler.java:40) [classes/:?]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.CombinedChannelDuplexHandler$DelegatingChannelHandlerContext.fireChannelRead(CombinedChannelDuplexHandler.java:436) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:324) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:296) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.CombinedChannelDuplexHandler.channelRead(CombinedChannelDuplexHandler.java:251) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:163) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:714) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:650) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:576) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at java.lang.Thread.run(Thread.java:833) [?:?]
+2023-06-13 15:47:07.492 ERROR [netty-worker-nio-3-2]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: Cannot invoke "Object.hashCode()" because "key" is null
+	at java.util.concurrent.ConcurrentHashMap.get(ConcurrentHashMap.java:936) ~[?:?]
+	at tech.songjian.common.config.DynamicConfigManager.getServiceDefinition(DynamicConfigManager.java:64) ~[classes/:?]
+	at tech.songjian.core.helper.RequestHelper.doContext(RequestHelper.java:40) ~[classes/:?]
+	at tech.songjian.core.netty.processor.NettyCoreProcessor.process(NettyCoreProcessor.java:42) [classes/:?]
+	at tech.songjian.core.netty.NettyHttpServerHandler.channelRead(NettyHttpServerHandler.java:40) [classes/:?]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.CombinedChannelDuplexHandler$DelegatingChannelHandlerContext.fireChannelRead(CombinedChannelDuplexHandler.java:436) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:324) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:296) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.CombinedChannelDuplexHandler.channelRead(CombinedChannelDuplexHandler.java:251) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:163) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:714) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:650) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:576) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at java.lang.Thread.run(Thread.java:833) [?:?]
+2023-06-13 15:47:07.638 ERROR [netty-worker-nio-3-3]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: Cannot invoke "Object.hashCode()" because "key" is null
+	at java.util.concurrent.ConcurrentHashMap.get(ConcurrentHashMap.java:936) ~[?:?]
+	at tech.songjian.common.config.DynamicConfigManager.getServiceDefinition(DynamicConfigManager.java:64) ~[classes/:?]
+	at tech.songjian.core.helper.RequestHelper.doContext(RequestHelper.java:40) ~[classes/:?]
+	at tech.songjian.core.netty.processor.NettyCoreProcessor.process(NettyCoreProcessor.java:42) [classes/:?]
+	at tech.songjian.core.netty.NettyHttpServerHandler.channelRead(NettyHttpServerHandler.java:40) [classes/:?]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.CombinedChannelDuplexHandler$DelegatingChannelHandlerContext.fireChannelRead(CombinedChannelDuplexHandler.java:436) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:324) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:296) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.CombinedChannelDuplexHandler.channelRead(CombinedChannelDuplexHandler.java:251) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:163) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:714) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:650) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:576) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at java.lang.Thread.run(Thread.java:833) [?:?]
+2023-06-13 15:47:08.267 ERROR [netty-worker-nio-3-4]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: Cannot invoke "Object.hashCode()" because "key" is null
+	at java.util.concurrent.ConcurrentHashMap.get(ConcurrentHashMap.java:936) ~[?:?]
+	at tech.songjian.common.config.DynamicConfigManager.getServiceDefinition(DynamicConfigManager.java:64) ~[classes/:?]
+	at tech.songjian.core.helper.RequestHelper.doContext(RequestHelper.java:40) ~[classes/:?]
+	at tech.songjian.core.netty.processor.NettyCoreProcessor.process(NettyCoreProcessor.java:42) [classes/:?]
+	at tech.songjian.core.netty.NettyHttpServerHandler.channelRead(NettyHttpServerHandler.java:40) [classes/:?]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.CombinedChannelDuplexHandler$DelegatingChannelHandlerContext.fireChannelRead(CombinedChannelDuplexHandler.java:436) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:324) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:296) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.CombinedChannelDuplexHandler.channelRead(CombinedChannelDuplexHandler.java:251) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:163) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:714) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:650) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:576) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at java.lang.Thread.run(Thread.java:833) [?:?]
+2023-06-13 15:47:08.417 ERROR [netty-worker-nio-3-5]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: null
+2023-06-13 15:47:08.799 ERROR [netty-worker-nio-3-6]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: null
+2023-06-13 15:47:08.941 ERROR [netty-worker-nio-3-7]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: null
+2023-06-13 15:47:08.987 ERROR [netty-worker-nio-3-8]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: null
+2023-06-13 15:47:09.142 ERROR [netty-worker-nio-3-9]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: null
+2023-06-13 15:47:09.363 ERROR [etty-worker-nio-3-10]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: null
+2023-06-13 15:47:09.510 ERROR [etty-worker-nio-3-11]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: null
+2023-06-13 15:47:09.556 ERROR [etty-worker-nio-3-12]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: null
+2023-06-13 15:47:09.707 ERROR [etty-worker-nio-3-13]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: null
+2023-06-13 15:47:11.252  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:47:21.255  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:47:31.257  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:47:41.259  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:47:51.262  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:48:01.266  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:48:11.269  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:48:21.272  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:48:31.275  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:48:41.280  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:48:51.283  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:49:01.297  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:49:11.300  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:49:21.302  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:49:31.304  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:49:41.307  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:49:51.310  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:50:01.312  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:50:11.325  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:50:18.815 ERROR [etty-worker-nio-3-14]             t.s.c.n.p.NettyCoreProcessor : process error PATH_NO_MATCHED 没有找到匹配的路径, 请求快速失败
+2023-06-13 15:50:21.329  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:50:31.345  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:50:41.348  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:50:48.555 ERROR [etty-worker-nio-3-15]             t.s.c.n.p.NettyCoreProcessor : process error PATH_NO_MATCHED 没有找到匹配的路径, 请求快速失败
+2023-06-13 15:50:49.645 ERROR [etty-worker-nio-3-16]             t.s.c.n.p.NettyCoreProcessor : process error PATH_NO_MATCHED 没有找到匹配的路径, 请求快速失败
+2023-06-13 15:50:51.351  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:51:01.355  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:51:11.358  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:51:21.360  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:51:31.364  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:51:37.101 ERROR [etty-worker-nio-3-17]             t.s.c.n.p.NettyCoreProcessor : process unknown error
+java.lang.NullPointerException: Cannot invoke "tech.songjian.common.config.ServiceDefinition.getServiceId()" because "serviceDefinition" is null
+	at tech.songjian.core.helper.RequestHelper.doContext(RequestHelper.java:49) ~[classes/:?]
+	at tech.songjian.core.netty.processor.NettyCoreProcessor.process(NettyCoreProcessor.java:42) [classes/:?]
+	at tech.songjian.core.netty.NettyHttpServerHandler.channelRead(NettyHttpServerHandler.java:40) [classes/:?]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.CombinedChannelDuplexHandler$DelegatingChannelHandlerContext.fireChannelRead(CombinedChannelDuplexHandler.java:436) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:324) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:296) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.CombinedChannelDuplexHandler.channelRead(CombinedChannelDuplexHandler.java:251) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:163) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:714) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:650) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:576) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) [netty-all-4.1.51.Final.jar:4.1.51.Final]
+	at java.lang.Thread.run(Thread.java:833) [?:?]
+2023-06-13 15:51:41.368  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:51:48.195 ERROR [etty-worker-nio-3-18]             t.s.c.n.p.NettyCoreProcessor : process error PATH_NO_MATCHED 没有找到匹配的路径, 请求快速失败
+2023-06-13 15:51:51.370  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:52:01.382  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:52:11.384  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:52:21.387  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:52:31.389  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:52:41.392  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:52:47.220 ERROR [etty-worker-nio-3-19]             t.s.c.n.p.NettyCoreProcessor : process error PATH_NO_MATCHED 没有找到匹配的路径, 请求快速失败
+2023-06-13 15:52:51.395  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:53:01.398  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:53:06.866  INFO [InstancesChangeEvent]                          t.s.c.Bootstrap : refresh service and instance: backend-http-server:1.0.0 [{address=backend-http-server:1.0.0, gray=false, port=8083, registerTime=1686642786254, enable=true, ip=10.250.117.83, serviceInstanceId=10.250.117.83:8083, weight=100, version=1.0.0, uniqueId=backend-http-server:1.0.0, tags=null}]
+2023-06-13 15:53:09.856 ERROR [etty-worker-nio-3-20]             t.s.c.n.p.NettyCoreProcessor : process error PATH_NO_MATCHED 没有找到匹配的路径, 请求快速失败
+2023-06-13 15:53:10.967 ERROR [etty-worker-nio-3-21]             t.s.c.n.p.NettyCoreProcessor : process error PATH_NO_MATCHED 没有找到匹配的路径, 请求快速失败
+2023-06-13 15:53:11.402  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:53:21.404  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:53:31.408  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:53:41.412  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:53:51.414  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:53:58.917 ERROR [etty-worker-nio-3-22]             t.s.c.n.p.NettyCoreProcessor : process error PATH_NO_MATCHED 没有找到匹配的路径, 请求快速失败
+2023-06-13 15:54:01.419  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:54:11.422  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:54:21.424  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:54:31.427  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:54:41.428  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:54:51.432  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:55:01.434  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:55:11.437  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:55:21.440  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:55:31.442  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:55:41.444  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:55:51.447  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:55:56.270  WARN [            Thread-0]           c.a.n.c.h.HttpClientBeanHolder : [HttpClientBeanHolder] Start destroying common HttpClient
+2023-06-13 15:55:56.270  WARN [           Thread-14]                   c.a.n.c.n.NotifyCenter : [NotifyCenter] Start destroying Publisher
+2023-06-13 15:55:56.271  WARN [           Thread-14]                   c.a.n.c.n.NotifyCenter : [NotifyCenter] Destruction of the end
+2023-06-13 15:55:56.271  WARN [            Thread-0]           c.a.n.c.h.HttpClientBeanHolder : [HttpClientBeanHolder] Destruction of the end
+2023-06-13 15:55:58.388  INFO [                main]            t.s.g.c.c.n.NacosConfigCenter : config from nacos: {
+    "rules": [
+        {
+            "id":"user-private",
+            "name":"user-private",
+            "protocol":"http",
+            "serviceId":"backend-http-server",
+            "prefix":"/user/private",
+            "paths": [
+            ],
+            "filterConfigs":[
+                {
+                    "id":"load_balancer_filter",
+                    "config":{
+                        "load_balancer": "Random"
+                    }
+                }, 
+                {
+                    "id": "user_auth_filter"
+                }
+            ]
+        }, 
+        {
+            "id":"user",
+            "name":"user",
+            "protocol":"http",
+            "serviceId":"backend-user-server",
+            "prefix":"/user",
+            "paths": [
+            ],
+            "filterConfigs":[
+                {
+                    "id":"load_balancer_filter",
+                    "config": {
+                        "load_balancer": "Random"
+                    }
+                }
+            ]
+        }
+    ]
+}
+2023-06-13 15:55:58.470  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.loadbalance.LoadBalanceFilter,load_balancer_filter,load_balancer_filter,100
+2023-06-13 15:55:58.473  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.router.RouterFilter,router_filter,router_filter,2147483646
+2023-06-13 15:55:58.475  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.flowCtl.FlowCtlFilter,flow_ctl_filter,flow_ctl_filter,50
+2023-06-13 15:55:58.475  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.user.UserAuthFilter,user_auth_filter,user_auth_filter,1
+2023-06-13 15:55:58.476  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.gray.GrayFilter,gray_filter,gray_filter,0
+2023-06-13 15:55:58.526  INFO [                main]               t.s.c.f.m.MonitorEndFilter : prometheus 启动成功！
+2023-06-13 15:55:58.526  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.monitor.MonitorEndFilter,monitor_end_filter,monitor_end_filter,2147483647
+2023-06-13 15:55:58.528  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.monitor.MonitorFilter,monitor_filter,monitor_filter,-1
+2023-06-13 15:55:58.909  INFO [                main]                  t.s.c.n.NettyHttpServer : server startup on port 9999
+2023-06-13 15:55:58.910  INFO [                main]                          t.s.c.Container : api gateway started!
+2023-06-13 15:55:59.056  INFO [                main]          t.s.g.r.c.n.NacosRegisterCenter : register tech.songjian.common.config.ServiceDefinition@5229e9b0 tech.songjian.common.config.ServiceInstance@65ed32b7
+2023-06-13 15:55:59.067  INFO [                main]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:55:59.114  INFO [                main]                          t.s.c.Bootstrap : refresh service and instance: backend-http-server:1.0.0 [{address=backend-http-server:1.0.0, gray=false, port=8083, registerTime=1686642786254, enable=true, ip=10.250.117.83, serviceInstanceId=10.250.117.83:8083, weight=100, version=1.0.0, uniqueId=backend-http-server:1.0.0, tags=null}]
+2023-06-13 15:55:59.114  INFO [                main]          t.s.g.r.c.n.NacosRegisterCenter : subscribe backend-http-server dev
+2023-06-13 15:55:59.120  INFO [                main]                          t.s.c.Bootstrap : refresh service and instance: api-gateway [null]
+2023-06-13 15:55:59.120  INFO [                main]          t.s.g.r.c.n.NacosRegisterCenter : subscribe api-gateway dev
+2023-06-13 15:55:59.942  INFO [InstancesChangeEvent]                          t.s.c.Bootstrap : refresh service and instance: backend-http-server:1.0.0 [{address=backend-http-server:1.0.0, gray=false, port=8083, registerTime=1686642786254, enable=true, ip=10.250.117.83, serviceInstanceId=10.250.117.83:8083, weight=100, version=1.0.0, uniqueId=backend-http-server:1.0.0, tags=null}]
+2023-06-13 15:55:59.944  INFO [InstancesChangeEvent]                          t.s.c.Bootstrap : refresh service and instance: api-gateway [{address=null, gray=false, port=9999, registerTime=1686642959017, enable=true, ip=10.250.117.83, serviceInstanceId=10.250.117.83:9999, weight=null, version=null, uniqueId=null, tags=null}]
+2023-06-13 15:55:59.945  INFO [InstancesChangeEvent]                          t.s.c.Bootstrap : refresh service and instance: api-gateway [{address=null, gray=false, port=9999, registerTime=1686642959017, enable=true, ip=10.250.117.83, serviceInstanceId=10.250.117.83:9999, weight=null, version=null, uniqueId=null, tags=null}]
+2023-06-13 15:56:09.124  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:56:19.128  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:56:29.133  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:56:39.136  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:56:42.641  WARN [            Thread-0]           c.a.n.c.h.HttpClientBeanHolder : [HttpClientBeanHolder] Start destroying common HttpClient
+2023-06-13 15:56:42.641  WARN [           Thread-14]                   c.a.n.c.n.NotifyCenter : [NotifyCenter] Start destroying Publisher
+2023-06-13 15:56:42.641  WARN [           Thread-14]                   c.a.n.c.n.NotifyCenter : [NotifyCenter] Destruction of the end
+2023-06-13 15:56:42.641  WARN [            Thread-0]           c.a.n.c.h.HttpClientBeanHolder : [HttpClientBeanHolder] Destruction of the end
+2023-06-13 15:58:37.404  INFO [                main]            t.s.g.c.c.n.NacosConfigCenter : config from nacos: {
+    "rules": [
+        {
+            "id":"user-private",
+            "name":"user-private",
+            "protocol":"http",
+            "serviceId":"backend-http-server",
+            "prefix":"/user/private",
+            "paths": [
+            ],
+            "filterConfigs":[
+                {
+                    "id":"load_balancer_filter",
+                    "config":{
+                        "load_balancer": "Random"
+                    }
+                }, 
+                {
+                    "id": "user_auth_filter"
+                }
+            ]
+        }, 
+        {
+            "id":"user",
+            "name":"user",
+            "protocol":"http",
+            "serviceId":"backend-user-server",
+            "prefix":"/user",
+            "paths": [
+            ],
+            "filterConfigs":[
+                {
+                    "id":"load_balancer_filter",
+                    "config": {
+                        "load_balancer": "Random"
+                    }
+                }
+            ]
+        }
+    ]
+}
+2023-06-13 15:58:37.472  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.loadbalance.LoadBalanceFilter,load_balancer_filter,load_balancer_filter,100
+2023-06-13 15:58:37.474  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.router.RouterFilter,router_filter,router_filter,2147483646
+2023-06-13 15:58:37.476  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.flowCtl.FlowCtlFilter,flow_ctl_filter,flow_ctl_filter,50
+2023-06-13 15:58:37.477  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.user.UserAuthFilter,user_auth_filter,user_auth_filter,1
+2023-06-13 15:58:37.478  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.gray.GrayFilter,gray_filter,gray_filter,0
+2023-06-13 15:58:37.523  INFO [                main]               t.s.c.f.m.MonitorEndFilter : prometheus 启动成功！
+2023-06-13 15:58:37.524  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.monitor.MonitorEndFilter,monitor_end_filter,monitor_end_filter,2147483647
+2023-06-13 15:58:37.525  INFO [                main]        t.s.c.f.GatewayFilterChainFactory : load filter success:class tech.songjian.core.filter.monitor.MonitorFilter,monitor_filter,monitor_filter,-1
+2023-06-13 15:58:37.834  INFO [                main]                  t.s.c.n.NettyHttpServer : server startup on port 9999
+2023-06-13 15:58:37.835  INFO [                main]                          t.s.c.Container : api gateway started!
+2023-06-13 15:58:37.981  INFO [                main]          t.s.g.r.c.n.NacosRegisterCenter : register tech.songjian.common.config.ServiceDefinition@5229e9b0 tech.songjian.common.config.ServiceInstance@65ed32b7
+2023-06-13 15:58:37.993  INFO [                main]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:58:38.028  INFO [                main]                          t.s.c.Bootstrap : refresh service and instance: backend-http-server:1.0.0 [{address=backend-http-server:1.0.0, gray=false, port=8083, registerTime=1686642786254, enable=true, ip=10.250.117.83, serviceInstanceId=10.250.117.83:8083, weight=100, version=1.0.0, uniqueId=backend-http-server:1.0.0, tags=null}]
+2023-06-13 15:58:38.030  INFO [                main]          t.s.g.r.c.n.NacosRegisterCenter : subscribe backend-http-server dev
+2023-06-13 15:58:38.032  INFO [                main]                          t.s.c.Bootstrap : refresh service and instance: api-gateway []
+2023-06-13 15:58:38.032  INFO [                main]          t.s.g.r.c.n.NacosRegisterCenter : subscribe api-gateway dev
+2023-06-13 15:58:38.856  INFO [InstancesChangeEvent]                          t.s.c.Bootstrap : refresh service and instance: backend-http-server:1.0.0 [{address=backend-http-server:1.0.0, gray=false, port=8083, registerTime=1686642786254, enable=true, ip=10.250.117.83, serviceInstanceId=10.250.117.83:8083, weight=100, version=1.0.0, uniqueId=backend-http-server:1.0.0, tags=null}]
+2023-06-13 15:58:38.858  INFO [InstancesChangeEvent]                          t.s.c.Bootstrap : refresh service and instance: api-gateway [{address=null, gray=false, port=9999, registerTime=1686643117946, enable=true, ip=10.250.117.83, serviceInstanceId=10.250.117.83:9999, weight=null, version=null, uniqueId=null, tags=null}]
+2023-06-13 15:58:48.036  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:58:58.040  INFO [bscribeAllServices.0]          t.s.g.r.c.n.NacosRegisterCenter : service list size 2
+2023-06-13 15:59:06.948  WARN [           Thread-14]                   c.a.n.c.n.NotifyCenter : [NotifyCenter] Start destroying Publisher
+2023-06-13 15:59:06.948  WARN [            Thread-0]           c.a.n.c.h.HttpClientBeanHolder : [HttpClientBeanHolder] Start destroying common HttpClient
+2023-06-13 15:59:06.949  WARN [           Thread-14]                   c.a.n.c.n.NotifyCenter : [NotifyCenter] Destruction of the end

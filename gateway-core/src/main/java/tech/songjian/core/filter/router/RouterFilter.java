@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.asynchttpclient.Request;
 import org.asynchttpclient.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tech.songjian.common.config.Rule;
 import tech.songjian.common.enums.ResponseCode;
 import tech.songjian.common.exception.ConnectException;
@@ -38,7 +40,7 @@ import static tech.songjian.common.constants.FilterConst.*;
 @FilterAspect(id = ROUTER_FILTER_ID, name = ROUTER_FILTER_NAME, order = ROUTER_FILTER_ORDER)
 public class RouterFilter implements Filter {
 
-
+    private static Logger accessLog = LoggerFactory.getLogger("accessLog");
     /**
      * 路由请求转发
      * @param gatewayContext
@@ -164,6 +166,15 @@ public class RouterFilter implements Filter {
             gatewayContext.setWritten();
             // 写回数据
             ResponseHelper.writeResponse(gatewayContext);
+            // 记录访问日志
+            accessLog.info("{} {} {} {} {} {} {}",
+                    System.currentTimeMillis() - gatewayContext.getRequest().getBeginTime(),
+                    gatewayContext.getRequest().getClientIp(),
+                    gatewayContext.getRequest().getUniqueId(),
+                    gatewayContext.getRequest().getMethod(),
+                    gatewayContext.getRequest().getPath(),
+                    gatewayContext.getResponse().getHttpResponseStatus().code(),
+                    gatewayContext.getResponse().getFutureResponse().getResponseBodyAsBytes().length);
         }
     }
 
