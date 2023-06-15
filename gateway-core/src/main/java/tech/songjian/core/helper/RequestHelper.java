@@ -67,6 +67,7 @@ public class RequestHelper {
 	private static GatewayRequest doRequest(FullHttpRequest fullHttpRequest, ChannelHandlerContext ctx) {
 
 		HttpHeaders headers = fullHttpRequest.headers();
+
 		//	从 header 头获取必须要传入的关键属性 uniqueId
 		String uniqueId = headers.get(GatewayConst.UNIQUE_ID);
 
@@ -75,6 +76,7 @@ public class RequestHelper {
 		String uri = fullHttpRequest.uri();
 		String clientIp = getClientIp(ctx, fullHttpRequest);
 		String contentType = HttpUtil.getMimeType(fullHttpRequest) == null ? null : HttpUtil.getMimeType(fullHttpRequest).toString();
+
 		Charset charset = HttpUtil.getCharset(fullHttpRequest, StandardCharsets.UTF_8);
 
 		GatewayRequest gatewayRequest = new GatewayRequest(uniqueId,

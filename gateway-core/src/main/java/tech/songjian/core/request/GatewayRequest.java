@@ -127,12 +127,13 @@ public class GatewayRequest implements IGatewayRequest{
      */
     private Map<String, List<String>> postParameters;
 
+
+    /************************************** 可修改的请求变量 ***************************************/
+
     /**
      * 可修改的 Scheme，默认为 http://
      */
     private String modifyScheme;
-
-    /************************************** 可修改的请求变量 ***************************************/
 
     /**
      * 可修改的主机名
@@ -149,7 +150,9 @@ public class GatewayRequest implements IGatewayRequest{
      */
     private final RequestBuilder requestBuilder;
 
-    public GatewayRequest(String uniquedId, Charset charset, String clientIp, String host, String uri, HttpMethod method, String contentType, HttpHeaders headers, FullHttpRequest fullHttpRequest) {
+    public GatewayRequest(String uniquedId, Charset charset, String clientIp,
+                          String host, String uri, HttpMethod method, String contentType,
+                          HttpHeaders headers, FullHttpRequest fullHttpRequest) {
         this.uniqueId = uniquedId;
         this.beginTime = TimeUtil.currentTimeMillis();
         this.charSet = charset;
@@ -160,19 +163,24 @@ public class GatewayRequest implements IGatewayRequest{
         this.contentType = contentType;
         this.headers = headers;
         this.fullHttpRequest = fullHttpRequest;
-        this.queryStringDecoder = new QueryStringDecoder(uri,charset);
+
+        // 使用 netty 的 QueryStringDecoder 解析出路径
+        this.queryStringDecoder = new QueryStringDecoder(uri, charset);
         this.path  = queryStringDecoder.path();
+
         this.modifyHost = host;
         this.modifyPath = path;
-
         this.modifyScheme = BasicConst.HTTP_PREFIX_SEPARATOR;
+
         this.requestBuilder = new RequestBuilder();
         this.requestBuilder.setMethod(getMethod().name());
         this.requestBuilder.setHeaders(getHeaders());
         this.requestBuilder.setQueryParams(queryStringDecoder.parameters());
 
+        // 从完成的 HTTP 请求体中获取内容
         ByteBuf contentBuffer = fullHttpRequest.content();
         if(Objects.nonNull(contentBuffer)){
+            // 传递给下游服务
             this.requestBuilder.setBody(contentBuffer.nioBuffer());
         }
     }
@@ -182,7 +190,7 @@ public class GatewayRequest implements IGatewayRequest{
      * @return
      */
     public String getBody() {
-        if (StringUtils.isEmpty(body)) {
+        if (StringUtils.isNotEmpty(body)) {
             body = fullHttpRequest.content().toString(charSet);
         }
         return body;
