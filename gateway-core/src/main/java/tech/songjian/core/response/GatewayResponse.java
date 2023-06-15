@@ -57,8 +57,8 @@ public class GatewayResponse {
      * @param key
      * @param val
      */
-    public  void  putHeader(CharSequence key, CharSequence val){
-        responseHeaders.add(key,val);
+    public void putHeader(CharSequence key, CharSequence val){
+        responseHeaders.add(key, val);
     }
 
     /**
@@ -66,7 +66,7 @@ public class GatewayResponse {
      * @param futureResponse
      * @return
      */
-    public  static  GatewayResponse buildGatewayResponse(Response futureResponse){
+    public static GatewayResponse buildGatewayResponse(Response futureResponse){
         GatewayResponse response = new GatewayResponse();
         response.setFutureResponse(futureResponse);
         response.setHttpResponseStatus(HttpResponseStatus.valueOf(futureResponse.getStatusCode()));
@@ -79,7 +79,7 @@ public class GatewayResponse {
      * @param args
      * @return
      */
-    public  static GatewayResponse buildGatewayResponse(ResponseCode code,Object...args){
+    public static GatewayResponse buildGatewayResponse(ResponseCode code,Object...args){
         ObjectNode objectNode = JSONUtil.createObjectNode();
         objectNode.put(JSONUtil.STATUS,code.getStatus().code());
         objectNode.put(JSONUtil.CODE,code.getCode());
@@ -89,8 +89,7 @@ public class GatewayResponse {
         response.setHttpResponseStatus(code.getStatus());
         response.putHeader(HttpHeaderNames.CONTENT_TYPE,HttpHeaderValues.APPLICATION_JSON+";charset=utf-8");
         response.setContent(JSONUtil.toJSONString(objectNode));
-
-        return  response;
+        return response;
     }
 
     /**
@@ -98,17 +97,17 @@ public class GatewayResponse {
      * @param data
      * @return
      */
-    public  static GatewayResponse buildGatewayResponse(Object data){
+    public static GatewayResponse buildGatewayResponse(Object data){
         ObjectNode objectNode = JSONUtil.createObjectNode();
-        objectNode.put(JSONUtil.STATUS,ResponseCode.SUCCESS.getStatus().code());
-        objectNode.put(JSONUtil.CODE,ResponseCode.SUCCESS.getCode());
-        objectNode.putPOJO(JSONUtil.DATA,data);
+        objectNode.put(JSONUtil.STATUS, ResponseCode.SUCCESS.getStatus().code());
+        objectNode.put(JSONUtil.CODE, ResponseCode.SUCCESS.getCode());
+        objectNode.putPOJO(JSONUtil.DATA, data);
 
         GatewayResponse response = new GatewayResponse();
         response.setHttpResponseStatus(ResponseCode.SUCCESS.getStatus());
         response.putHeader(HttpHeaderNames.CONTENT_TYPE,HttpHeaderValues.APPLICATION_JSON+";charset=utf-8");
         response.setContent(JSONUtil.toJSONString(objectNode));
-        return  response;
+        return response;
     }
 }
 

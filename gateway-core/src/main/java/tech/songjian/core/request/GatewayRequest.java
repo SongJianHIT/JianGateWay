@@ -46,12 +46,6 @@ public class GatewayRequest implements IGatewayRequest{
     private final long beginTime;
 
     /**
-     * 进入网关的结束时间
-     */
-    // @Getter
-    // private final long endTime;
-
-    /**
      * 字符集
      */
     @Getter
