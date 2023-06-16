@@ -1187,3 +1187,133 @@ public class SpringMVCClientRegisterManager
 
 ## 配置中心
 
+### ConfigCenter
+
+一样，先完成接口：
+
+```JAVA
+/**
+ * ConfigCenter
+ * @description 配置中心接口
+ * @author SongJian
+ * @date 2023/6/10 13:44
+ * @version
+ */
+public interface ConfigCenter {
+
+    /**
+     * 初始化方法
+     * @param serverAddr
+     * @param env
+     */
+    void init(String serverAddr, String env);
+
+    /**
+     * 订阅规则变更事件的方法
+     */
+    void subscribeRulesChange(RulesChangeListener listener);
+}
+```
+
+### RulesChangeListener
+
+我们需要定义一个监听器，来监听规则的变化。
+
+```JAVA
+/**
+ * RulesChangeListener
+ * @description 规则变更的监听器
+ * @author SongJian
+ * @date 2023/6/10 13:46
+ * @version
+ */
+public interface RulesChangeListener {
+
+    /**
+     * 回调方法：当规则变更时，触发
+     * @param rules 规则列表
+     */
+    void onRulesChange(List<Rule> rules);
+}
+```
+
+接下来就是具体的实现。
+
+### NacosConfigCenter
+
+配置中心需要通过 `ConfigService` 去：
+
+- 到 Nacos 中获取配置
+- 绑定监听器
+
+监听器设置为 `Listener` 监听器，可以监听到配置变更的情况：`receiveConfigInfo`。
+
+```JAVA
+@Slf4j
+public class NacosConfigCenter implements ConfigCenter {
+
+    /**
+     * 定义常量 DATA_ID
+     */
+    private static final String DATA_ID = "api-gateway";
+
+    /**
+     * 服务端地址
+     */
+    private String serverAddr;
+
+    /**
+     * 环境
+     */
+    private String env;
+
+    /**
+     * nacos 提供的便于获取 配置的 api
+     */
+    private ConfigService configService;
+
+    @Override
+    public void init(String serverAddr, String env) {
+        this.serverAddr = serverAddr;
+        this.env = env;
+
+        try {
+            configService  = NacosFactory.createConfigService(serverAddr);
+        } catch (NacosException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void subscribeRulesChange(RulesChangeListener listener) {
+        try {
+            // 最开始先获取一次配置
+            String config = configService.getConfig(DATA_ID, env, 5000);
+            log.info("【配置中心】从 Nacos 中获取配置: {}", config);
+
+            // JSON 转化成 JAVA 对象
+            List<Rule> rules = JSON.parseObject(config).getJSONArray("rules").toJavaList(Rule.class);
+            listener.onRulesChange(rules);
+
+            // addListener 添加监听器。监听配置变化
+            configService.addListener(DATA_ID, env, new Listener() {
+                @Override
+                public Executor getExecutor() {
+                    return null;
+                }
+
+                @Override
+                public void receiveConfigInfo(String configInfo) {
+                    log.info("【配置中心】从 Nacos 中获取配置: {}", configInfo);
+                    List<Rule> rules = JSON.parseObject(configInfo).getJSONArray("rules").toJavaList(Rule.class);
+                    // 缓存到本地
+                    listener.onRulesChange(rules);
+                }
+            });
+        } catch (NacosException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+

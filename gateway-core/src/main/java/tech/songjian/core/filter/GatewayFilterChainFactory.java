@@ -38,12 +38,14 @@ public class GatewayFilterChainFactory implements FilterFactory{
     }
 
     private GatewayFilterChainFactory() {
-        ServiceLoader<Filter>  serviceLoader = ServiceLoader.load(Filter.class);
+        ServiceLoader<Filter> serviceLoader = ServiceLoader.load(Filter.class);
+
         serviceLoader.stream().forEach(filterProvider -> {
             Filter filter = filterProvider.get();
             FilterAspect annotation = filter.getClass().getAnnotation(FilterAspect.class);
-            log.info("load filter success:{},{},{},{}",filter.getClass(),
-                    annotation.id(),annotation.name(),annotation.order());
+            log.info("【网关过滤器】完成过滤加载：{}，{}，{}，{}",
+                    filter.getClass(), annotation.id(),annotation.name(),annotation.order());
+
             if (annotation != null) {
                 // 添加到过滤集合
                 String filterId = annotation.id();
