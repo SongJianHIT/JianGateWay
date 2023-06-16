@@ -25,7 +25,7 @@ import java.util.ServiceLoader;
 public abstract class AbstractClientRegisterManager {
 
     /**
-     * 配置
+     * 下游服务配置
      */
     @Getter
     private ApiProperties apiProperties;
@@ -35,14 +35,17 @@ public abstract class AbstractClientRegisterManager {
      */
     private RegisterCenter registerCenter;
 
+    /**
+     * 构造函数，初始化注册中心对象
+     * @param apiProperties
+     */
     protected AbstractClientRegisterManager (ApiProperties apiProperties) {
         this.apiProperties = apiProperties;
-
-        // 初始化注册中心对象
+        // 初始化 注册中心 对象
         ServiceLoader<RegisterCenter> serviceLoader = ServiceLoader.load(RegisterCenter.class);
         registerCenter = serviceLoader.findFirst().orElseThrow(() -> {
-            log.error("not found RegisterCenter impl");
-            return new RuntimeException("not found RegisterCenter impl");
+            log.error("没有找到【注册中心】的具体实现类！");
+            return new RuntimeException("没有找到【注册中心】的具体实现类！");
         });
         registerCenter.init(apiProperties.getRegisterAddress(), apiProperties.getEnv());
     }

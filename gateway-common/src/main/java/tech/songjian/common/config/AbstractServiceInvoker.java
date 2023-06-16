@@ -5,8 +5,14 @@ package tech.songjian.common.config;
  */
 public class AbstractServiceInvoker implements ServiceInvoker {
 
+	/**
+	 * 真正服务调用的全路径
+	 */
 	protected String invokerPath;
 
+	/**
+	 * 超时事件，默认 5s
+	 */
 	protected int timeout = 5000;
 
 	@Override

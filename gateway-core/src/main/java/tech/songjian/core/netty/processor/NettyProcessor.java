@@ -32,4 +32,3 @@ public interface NettyProcessor {
      */
     void shutdown();
 }
-

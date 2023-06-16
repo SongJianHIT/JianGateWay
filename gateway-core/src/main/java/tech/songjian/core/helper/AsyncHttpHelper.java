@@ -36,5 +36,4 @@ public class AsyncHttpHelper {
 		ListenableFuture<T> future = asyncHttpClient.executeRequest(request, handler);
 		return future.toCompletableFuture();
 	}
-
 }

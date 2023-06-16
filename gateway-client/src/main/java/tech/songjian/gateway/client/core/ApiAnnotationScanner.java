@@ -1,7 +1,4 @@
 package tech.songjian.gateway.client.core;
-
-
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.ProviderConfig;
 import org.apache.dubbo.config.spring.ServiceBean;
@@ -33,7 +30,7 @@ public class ApiAnnotationScanner {
     }
 
     /**
-     * 扫描传入的bean对象，最终返回一个服务定义
+     * 扫描传入的 bean 对象，最终返回一个服务定义
      * @param bean
      * @param args
      * @return
@@ -45,30 +42,30 @@ public class ApiAnnotationScanner {
             return null;
         }
 
-        // 拿到注解数据
+        // 拿到服务的注解数据
         ApiService apiService = aClass.getAnnotation(ApiService.class);
         String serviceId = apiService.serviceId();
         ApiProtocol protocol = apiService.protocol();
         String patternPath = apiService.patternPath();
         String version = apiService.version();
 
-        ServiceDefinition serviceDefinition = new ServiceDefinition();
-
         Map<String, ServiceInvoker> invokerMap = new HashMap<>();
-
-        // 扫描所有方法
+        // 扫描目标类上的所有方法
         Method[] methods = aClass.getMethods();
         if (methods != null && methods.length > 0) {
             for (Method method : methods) {
-                // 拿到 ApiInvoker 注解
+                // 尝试拿到 ApiInvoker 注解
                 ApiInvoker apiInvoker = method.getAnnotation(ApiInvoker.class);
                 if (apiInvoker == null) {
+                    // 如果方法上没有加 ApiInvoker，说明不是暴露的服务方法
                     continue;
                 }
-
+                // 否则，处理服务方法
+                // 根据注解，获取方法的访问路径
                 String path = apiInvoker.path();
                 // 判断服务协议
                 switch (protocol) {
+                    // 根据访问路径，构造最最最后的访问路径
                     case HTTP:
                         HttpServiceInvoker httpServiceInvoker = createHttpServiceInvoker(path);
                         invokerMap.put(path, httpServiceInvoker);
@@ -89,6 +86,7 @@ public class ApiAnnotationScanner {
             }
 
             // 构造返回对象
+            ServiceDefinition serviceDefinition = new ServiceDefinition();
             serviceDefinition.setUniqueId(serviceId + BasicConst.COLON_SEPARATOR + version);
             serviceDefinition.setServiceId(serviceId);
             serviceDefinition.setVersion(version);
@@ -104,7 +102,7 @@ public class ApiAnnotationScanner {
     }
 
     /**
-     * 构建HttpServiceInvoker对象
+     * 构建 HttpServiceInvoker 对象
      */
     private HttpServiceInvoker createHttpServiceInvoker(String path) {
         HttpServiceInvoker httpServiceInvoker = new HttpServiceInvoker();
@@ -115,7 +113,7 @@ public class ApiAnnotationScanner {
     /**
      * 构建DubboServiceInvoker对象
      */
-    private DubboServiceInvoker createDubboServiceInvoker(String path, ServiceBean<?> serviceBean, Method method) {
+    private DubboServiceInvoker createDubboServiceInvoker (String path, ServiceBean<?> serviceBean, Method method) {
         DubboServiceInvoker dubboServiceInvoker = new DubboServiceInvoker();
         dubboServiceInvoker.setInvokerPath(path);
 
@@ -153,5 +151,4 @@ public class ApiAnnotationScanner {
 
         return dubboServiceInvoker;
     }
-
 }

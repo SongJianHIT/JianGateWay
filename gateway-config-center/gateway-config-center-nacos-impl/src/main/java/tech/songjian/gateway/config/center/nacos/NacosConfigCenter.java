@@ -45,7 +45,7 @@ public class NacosConfigCenter implements ConfigCenter {
     private String env;
 
     /**
-     * nacos 提供的
+     * nacos 提供的便于获取 配置的 api
      */
     private ConfigService configService;
 
@@ -64,15 +64,15 @@ public class NacosConfigCenter implements ConfigCenter {
     @Override
     public void subscribeRulesChange(RulesChangeListener listener) {
         try {
-            // 初始化通知
+            // 最开始先获取一次配置
             String config = configService.getConfig(DATA_ID, env, 5000);
-            log.info("config from nacos: {}", config);
+            log.info("【配置中心】从 Nacos 中获取配置: {}", config);
+
             // JSON 转化成 JAVA 对象
             List<Rule> rules = JSON.parseObject(config).getJSONArray("rules").toJavaList(Rule.class);
             listener.onRulesChange(rules);
 
-
-            // 监听变化
+            // addListener 添加监听器。监听配置变化
             configService.addListener(DATA_ID, env, new Listener() {
                 @Override
                 public Executor getExecutor() {
@@ -81,12 +81,12 @@ public class NacosConfigCenter implements ConfigCenter {
 
                 @Override
                 public void receiveConfigInfo(String configInfo) {
-                    log.info("config from nacos: {}", configInfo);
+                    log.info("【配置中心】从 Nacos 中获取配置: {}", configInfo);
                     List<Rule> rules = JSON.parseObject(configInfo).getJSONArray("rules").toJavaList(Rule.class);
+                    // 缓存到本地
                     listener.onRulesChange(rules);
                 }
             });
-
         } catch (NacosException e) {
             throw new RuntimeException(e);
         }

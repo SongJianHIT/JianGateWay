@@ -19,7 +19,7 @@ import java.util.List;
 public interface RulesChangeListener {
 
     /**
-     * 回调方法：当规则变更时，触发回调
+     * 回调方法：当规则变更时，触发
      * @param rules 规则列表
      */
     void onRulesChange(List<Rule> rules);

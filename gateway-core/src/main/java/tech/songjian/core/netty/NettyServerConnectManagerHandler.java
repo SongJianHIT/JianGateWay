@@ -80,5 +80,4 @@ public class NettyServerConnectManagerHandler extends ChannelDuplexHandler {
         log.warn("NETTY SERVER PIPLINE: remoteAddr： {}, exceptionCaught {}", remoteAddr, cause);
         ctx.channel().close();
     }
-
 }

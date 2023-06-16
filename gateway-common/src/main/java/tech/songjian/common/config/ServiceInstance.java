@@ -19,7 +19,7 @@ public class ServiceInstance implements Serializable {
 	protected String serviceInstanceId;
 
 	/**
-	 * 	服务定义唯一id： uniqueId
+	 * 	服务定义 唯一id： uniqueId
 	 */
 	protected String uniqueId;
 

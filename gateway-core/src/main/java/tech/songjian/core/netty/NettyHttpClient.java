@@ -79,7 +79,7 @@ public class NettyHttpClient implements LifeCycle {
             try {
                 asyncHttpClient.close();
             } catch (IOException e) {
-                log.error("NettyHttpClient shutdown error", e);
+                log.error("NettyHttpClient 关闭异常！", e);
             }
         }
     }

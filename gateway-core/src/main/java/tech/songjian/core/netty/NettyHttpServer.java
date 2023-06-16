@@ -50,6 +50,7 @@ public class NettyHttpServer implements LifeCycle {
      * boss 和
      */
     private EventLoopGroup bossEventLoopGroup;
+
     /**
      * worker 线程组需要对外暴露，给 client 一起用
      */
@@ -70,7 +71,7 @@ public class NettyHttpServer implements LifeCycle {
     @Override
     public void init() {
         this.serverBootstrap = new ServerBootstrap();
-        log.info("使用 netty worker 线程数为：{}", config.getEventLoopGroupWorkerNum());
+        log.info("【Netty服务端】Worker 线程数为：{}", config.getEventLoopGroupWorkerNum());
         if (useEpoll()) {
             this.bossEventLoopGroup = new EpollEventLoopGroup(
                     config.getEventLoopGroupBossNum(),
@@ -115,7 +116,6 @@ public class NettyHttpServer implements LifeCycle {
                         /**
                          * 如果只是单纯的用 HttpServerCodec 是无法完全的解析 Http POST 请求的，
                          * 因为 HttpServerCodec 只能获取 uri 中参数
-                         *
                          * HttpObjectAggregator 是 Netty 提供的 HTTP 消息聚合器，通过它可以把 HttpMessage
                          * 和 HttpContent 聚合成一个 FullHttpRequest 或者 FullHttpResponse(取决于是处理请求还是响应）
                          */
@@ -127,8 +127,9 @@ public class NettyHttpServer implements LifeCycle {
                     }
                 });
         try {
+            // 绑定服务器的地址，并同步等待服务器启动完成
             this.serverBootstrap.bind().sync();
-            log.info("server startup on port {}", config.getPort());
+            log.info("【Netty服务端】网关服务端口： {}", config.getPort());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

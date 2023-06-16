@@ -25,5 +25,4 @@ public class PingController {
         Thread.sleep(800);
         return "pong";
     }
-
 }

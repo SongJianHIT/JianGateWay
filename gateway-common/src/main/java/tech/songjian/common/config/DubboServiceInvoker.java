@@ -17,7 +17,7 @@ public class DubboServiceInvoker extends AbstractServiceInvoker {
 	//	参数名字的集合
 	private String[] parameterTypes;
 
-	//	dubbo服务的版本号
+	//	dubbo 服务的版本号
 	private String version;
 
 	public String getRegisterAddress() {

@@ -25,7 +25,5 @@ public interface RegisterCenterListener {
      * @param serviceInstanceSet
      */
     void onChange(ServiceDefinition serviceDefinition, Set<ServiceInstance> serviceInstanceSet);
-
-
 }
 

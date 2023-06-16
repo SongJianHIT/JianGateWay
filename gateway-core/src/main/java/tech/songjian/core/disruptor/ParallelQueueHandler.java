@@ -35,9 +35,11 @@ public class ParallelQueueHandler<E> implements ParallelQueue<E> {
                         .setNameFormat("ParallelQueueHandler" + builder.namePrefix + "-pool-%d").build());
         this.eventListener = builder.listener;
         this.eventTranslator = new HolderEventTranslator();
+
         // 创建 RingBuffer
         this.ringBuffer = RingBuffer.create(builder.producerType,
                 new HolderEventFactory(), builder.bufferSize, builder.waitStrategy);
+
         // 通过 RingBuffer 创建屏障
         SequenceBarrier sequenceBarrier = ringBuffer.newBarrier();
 

@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -56,11 +57,21 @@ public class SpringMVCClientRegisterManager
         super(apiProperties);
     }
 
+    /**
+     * 设置 SpringMVC 上下文
+     * @param applicationContext
+     * @throws BeansException
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
+
+    /**
+     * SpringMVC 启动事件执行
+     * @param applicationEvent
+     */
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
         if (applicationEvent instanceof ApplicationStartedEvent) {
@@ -68,27 +79,43 @@ public class SpringMVCClientRegisterManager
             try {
                 doRegisterSpringMvc();
             } catch (Exception e) {
-                log.info("doRegisterSpringMvc error");
+                log.info("下游【SpringMVC服务】注册失败！");
                 throw new RuntimeException(e);
             }
         }
     }
 
+    /**
+     * 注册具体逻辑：
+     *      1、从 applicationContext 获取所有 RequestMappingHandlerMapping 的 bean 对象
+     *      2、从而获取对应的 Controller 类
+     *      3、注解解析，构造服务定义和服务实例
+     *      4、调用注册中心的注册接口，完成服务注册
+     */
     private void doRegisterSpringMvc() {
-        Map<String, RequestMappingHandlerMapping> allRequestMapping = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
+        // BeanFactoryUtils.beansOfTypeIncludingAncestors 方法可以
+        // 从指定的 beanFactory 中获取指定类型的所有 bean，包括在祖先 bean 工厂中定义的 bean
+        // 这里就是想要获取所有 RequestMappingHandlerMapping 的 bean 对象
+        Map<String, RequestMappingHandlerMapping> allRequestMapping =
+                BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext,
                 RequestMappingHandlerMapping.class, true, false);
+
         for (RequestMappingHandlerMapping handlerMapping : allRequestMapping.values()) {
             // 拿到所有的方法
             Map<RequestMappingInfo, HandlerMethod> handlerMethods = handlerMapping.getHandlerMethods();
+
             for (Map.Entry<RequestMappingInfo, HandlerMethod> me : handlerMethods.entrySet()) {
                 HandlerMethod handlerMethod = me.getValue();
                 Class<?> clazz = handlerMethod.getBeanType();
+
+                // 重点在这：获取 Controller 的实例bean
                 Object bean = applicationContext.getBean(clazz);
                 if (set.contains(bean)) {
                     // 如果已经处理过了，则跳过
                     continue;
                 }
 
+                // 传入 bean 对象，并扫描其上面的注解，返回服务定义
                 ServiceDefinition serviceDefinition = ApiAnnotationScanner.getInstance().scanner(bean);
                 if (serviceDefinition == null) {
                     // 如果拿不到服务定义，跳过

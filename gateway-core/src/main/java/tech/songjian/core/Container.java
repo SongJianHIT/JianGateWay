@@ -43,12 +43,13 @@ public class Container implements LifeCycle {
     @Override
     public void init() {
         NettyCoreProcessor nettyCoreProcessor = new NettyCoreProcessor();
+        // 判断缓冲队列的类型
         if (BUFFER_TYPE_PARALLEL.equals(config.getBufferType())) {
+            // 如果缓冲队列采用 parallel ，则使用 disruptor
             this.nettyProcessor = new DisruptorNettyCoreProcessor(config, nettyCoreProcessor);
         } else {
             this.nettyProcessor = nettyCoreProcessor;
         }
-
 
         this.nettyHttpServer = new NettyHttpServer(config, nettyProcessor);
         this.nettyHttpClient = new NettyHttpClient(config, nettyHttpServer.getWorkerEventLoopGroup());
@@ -59,7 +60,7 @@ public class Container implements LifeCycle {
         nettyProcessor.start();
         nettyHttpServer.start();
         nettyHttpClient.start();
-        log.info("api gateway started!");
+        log.info("【网关核心容器】启动完成！");
     }
 
     @Override
@@ -67,7 +68,7 @@ public class Container implements LifeCycle {
         nettyProcessor.shutdown();
         nettyHttpServer.shutdown();
         nettyHttpClient.shutdown();
-        log.info("api gateway shutdown!");
+        log.info("【网关核心容器】成功关闭！");
     }
 }
 

@@ -44,8 +44,6 @@ public class Dubbo27ClientRegisterManager
      */
     private Set<Objects> set = new HashSet<>();
 
-
-
     public Dubbo27ClientRegisterManager(ApiProperties apiProperties) {
         super(apiProperties);
     }
